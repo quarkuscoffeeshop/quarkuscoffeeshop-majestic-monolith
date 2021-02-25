@@ -1,4 +1,4 @@
-package io.quarkuscoffeeshop.majesticmonolith.resteasyjackson;
+package io.quarkuscoffeeshop.coffeeshop.resteasyjackson;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;

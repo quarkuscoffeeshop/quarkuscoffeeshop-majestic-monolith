@@ -1,4 +1,4 @@
-package io.quarkuscoffeeshop.majesticmonolith.resteasyjackson;
+package io.quarkuscoffeeshop.coffeeshop.resteasyjackson;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
