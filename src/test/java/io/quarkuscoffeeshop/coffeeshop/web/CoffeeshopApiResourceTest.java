@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkuscoffeeshop.coffeeshop.TestUtils;
-import io.restassured.http.ContentType;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -14,13 +13,12 @@ import org.slf4j.LoggerFactory;
 import javax.ws.rs.core.MediaType;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.CoreMatchers.is;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 @QuarkusTest
-public class ApiResourceTest {
+public class CoffeeshopApiResourceTest {
 
-    Logger logger = LoggerFactory.getLogger(ApiResourceTest.class);
+    Logger logger = LoggerFactory.getLogger(CoffeeshopApiResourceTest.class);
 
     static ObjectMapper objectMapper;
 

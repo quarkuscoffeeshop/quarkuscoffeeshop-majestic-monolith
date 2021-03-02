@@ -25,7 +25,6 @@ public class OrderServiceTest {
 
         assertNotNull(orderService);
         orderService.onOrderIn(TestUtils.mockPlaceOrderCommand());
-        orderService.onOrderUp(new OrderUp());
     }
 
 }

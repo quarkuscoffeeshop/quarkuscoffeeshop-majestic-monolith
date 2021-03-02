@@ -18,9 +18,9 @@ import javax.ws.rs.core.Response;
 @Path("/api")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public class ApiResource {
+public class CoffeeshopApiResource {
 
-    private static final Logger logger = LoggerFactory.getLogger(ApiResource.class);
+    private static final Logger logger = LoggerFactory.getLogger(CoffeeshopApiResource.class);
 
     @Inject
     OrderService orderService;
