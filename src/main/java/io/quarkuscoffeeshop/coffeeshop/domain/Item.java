@@ -1,33 +1,22 @@
 package io.quarkuscoffeeshop.coffeeshop.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
-
-import javax.persistence.*;
 import java.math.BigDecimal;
 
-@JsonIgnoreProperties(value = { "orderId" })
-@Entity
-@Table(name = "items")
-public class Item  extends PanacheEntityBase {
+public enum Item {
 
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "order_id", nullable = false)
-    Order order;
+    //Beverages
+    CAPPUCCINO(BigDecimal.valueOf(4.50)), COFFEE_BLACK(BigDecimal.valueOf(3.00)), COFFEE_WITH_ROOM(BigDecimal.valueOf(3.00)), ESPRESSO(BigDecimal.valueOf(3.50)), ESPRESSO_DOUBLE(BigDecimal.valueOf(4.50)), LATTE(BigDecimal.valueOf(4.50)),
 
-    @Id
-    @Column(nullable = false, unique = true)
-    private String itemId;
-
-    @Enumerated(EnumType.STRING)
-    private Item item;
-
-    private String name;
+    //Food
+    CAKEPOP(BigDecimal.valueOf(2.50)), CROISSANT(BigDecimal.valueOf(3.25)), MUFFIN(BigDecimal.valueOf(3.00)), CROISSANT_CHOCOLATE(BigDecimal.valueOf(3.50));
 
     private BigDecimal price;
 
-    @Enumerated(EnumType.STRING)
-    private ItemStatus lineItemStatus;
+    public BigDecimal getPrice() {
+        return this.price;
+    }
+
+    private Item(BigDecimal price) {
+        this.price = price;
+    }
 }

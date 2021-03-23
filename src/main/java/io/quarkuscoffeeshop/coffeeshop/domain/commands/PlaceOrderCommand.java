@@ -1,6 +1,6 @@
 package io.quarkuscoffeeshop.coffeeshop.domain.commands;
 
-import io.quarkuscoffeeshop.coffeeshop.domain.Item;
+import io.quarkuscoffeeshop.coffeeshop.domain.LineItem;
 import io.quarkuscoffeeshop.coffeeshop.domain.Location;
 import io.quarkuscoffeeshop.coffeeshop.domain.OrderSource;
 
@@ -17,19 +17,19 @@ public class PlaceOrderCommand {
 
     private final String loyaltyMemberId;
 
-    private final List<Item> baristaLineItems;
+    private final List<LineItem> baristaLineLineItems;
 
-    private final List<Item> kitchenLineItems;
+    private final List<LineItem> kitchenLineLineItems;
 
     private final Instant timestamp;
 
-    public PlaceOrderCommand(final String id, final OrderSource orderSource, final Location location, final String loyaltyMemberId, final List<Item> baristaLineItems, final List<Item> kitchenLineItems) {
+    public PlaceOrderCommand(final String id, final OrderSource orderSource, final Location location, final String loyaltyMemberId, final List<LineItem> baristaLineLineItems, final List<LineItem> kitchenLineLineItems) {
         this.id = id;
         this.orderSource = orderSource;
         this.location = location;
         this.loyaltyMemberId = loyaltyMemberId;
-        this.baristaLineItems = baristaLineItems;
-        this.kitchenLineItems = kitchenLineItems;
+        this.baristaLineLineItems = baristaLineLineItems;
+        this.kitchenLineLineItems = kitchenLineLineItems;
         this.timestamp = Instant.now();
     }
 
@@ -40,8 +40,8 @@ public class PlaceOrderCommand {
                 ", orderSource=" + orderSource +
                 ", location=" + location +
                 ", loyaltyMemberId='" + loyaltyMemberId + '\'' +
-                ", baristaLineItems=" + baristaLineItems +
-                ", kitchenLineItems=" + kitchenLineItems +
+                ", baristaLineItems=" + baristaLineLineItems +
+                ", kitchenLineItems=" + kitchenLineLineItems +
                 ", timestamp=" + timestamp +
                 '}';
     }
@@ -58,9 +58,9 @@ public class PlaceOrderCommand {
         if (location != that.location) return false;
         if (loyaltyMemberId != null ? !loyaltyMemberId.equals(that.loyaltyMemberId) : that.loyaltyMemberId != null)
             return false;
-        if (baristaLineItems != null ? !baristaLineItems.equals(that.baristaLineItems) : that.baristaLineItems != null)
+        if (baristaLineLineItems != null ? !baristaLineLineItems.equals(that.baristaLineLineItems) : that.baristaLineLineItems != null)
             return false;
-        if (kitchenLineItems != null ? !kitchenLineItems.equals(that.kitchenLineItems) : that.kitchenLineItems != null)
+        if (kitchenLineLineItems != null ? !kitchenLineLineItems.equals(that.kitchenLineLineItems) : that.kitchenLineLineItems != null)
             return false;
         return timestamp != null ? timestamp.equals(that.timestamp) : that.timestamp == null;
     }
@@ -71,8 +71,8 @@ public class PlaceOrderCommand {
         result = 31 * result + (orderSource != null ? orderSource.hashCode() : 0);
         result = 31 * result + (location != null ? location.hashCode() : 0);
         result = 31 * result + (loyaltyMemberId != null ? loyaltyMemberId.hashCode() : 0);
-        result = 31 * result + (baristaLineItems != null ? baristaLineItems.hashCode() : 0);
-        result = 31 * result + (kitchenLineItems != null ? kitchenLineItems.hashCode() : 0);
+        result = 31 * result + (baristaLineLineItems != null ? baristaLineLineItems.hashCode() : 0);
+        result = 31 * result + (kitchenLineLineItems != null ? kitchenLineLineItems.hashCode() : 0);
         result = 31 * result + (timestamp != null ? timestamp.hashCode() : 0);
         return result;
     }
@@ -93,12 +93,12 @@ public class PlaceOrderCommand {
         return loyaltyMemberId;
     }
 
-    public List<Item> getBaristaLineItems() {
-        return baristaLineItems;
+    public List<LineItem> getBaristaLineItems() {
+        return baristaLineLineItems;
     }
 
-    public List<Item> getKitchenLineItems() {
-        return kitchenLineItems;
+    public List<LineItem> getKitchenLineItems() {
+        return kitchenLineLineItems;
     }
 
     public Instant getTimestamp() {

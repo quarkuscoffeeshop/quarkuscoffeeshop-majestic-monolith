@@ -3,19 +3,26 @@ package io.quarkuscoffeeshop.coffeeshop.counter;
 import io.quarkuscoffeeshop.coffeeshop.counter.api.OrderService;
 import io.quarkuscoffeeshop.coffeeshop.domain.OrderUp;
 import io.quarkuscoffeeshop.coffeeshop.domain.commands.PlaceOrderCommand;
+import io.vertx.core.eventbus.EventBus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.Initialized;
+import javax.inject.Inject;
 
 @ApplicationScoped
 public class OrderServiceImpl implements OrderService {
 
     Logger logger = LoggerFactory.getLogger(OrderServiceImpl.class);
 
+    @Inject
+    EventBus eventBus;
+
     @Override
     public void onOrderIn(final PlaceOrderCommand placeOrderCommand) {
         logger.debug("PlaceOrderCommand received: {}", placeOrderCommand);
+        eventBus.send("web-updates", placeOrderCommand);
     }
 
     @Override

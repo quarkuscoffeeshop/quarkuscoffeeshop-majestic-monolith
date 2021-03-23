@@ -1,0 +1,2 @@
+DROP SCHEMA IF EXISTS coffeeshop CASCADE ;
+CREATE SCHEMA coffeeshop AUTHORIZATION coffeeshopuser;

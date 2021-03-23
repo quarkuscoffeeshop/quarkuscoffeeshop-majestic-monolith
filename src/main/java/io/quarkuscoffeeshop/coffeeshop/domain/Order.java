@@ -32,8 +32,8 @@ public class Order {
     private Location location;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "order", cascade = CascadeType.ALL)
-    private List<Item> baristaLineItems;
+    private List<LineItem> baristaLineLineItems;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "order", cascade = CascadeType.ALL)
-    private List<Item> kitchenLineItems;
+    private List<LineItem> kitchenLineLineItems;
 }
