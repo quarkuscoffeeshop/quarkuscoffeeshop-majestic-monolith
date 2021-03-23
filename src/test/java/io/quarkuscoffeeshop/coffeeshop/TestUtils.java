@@ -5,6 +5,7 @@ import io.quarkuscoffeeshop.coffeeshop.domain.OrderSource;
 import io.quarkuscoffeeshop.coffeeshop.domain.commands.PlaceOrderCommand;
 
 import java.time.Instant;
+import java.util.Optional;
 import java.util.UUID;
 
 public class TestUtils {
@@ -15,9 +16,8 @@ public class TestUtils {
                 UUID.randomUUID().toString(),
                 OrderSource.COUNTER,
                 Location.ATLANTA,
-                "PeskyParrot",
-                null,
-                null
-        );
+                Optional.of("PeskyParrot"),
+                Optional.empty(),
+                Optional.empty());
     }
 }

@@ -4,8 +4,6 @@ package io.quarkuscoffeeshop.coffeeshop.web;
 import io.quarkuscoffeeshop.coffeeshop.counter.api.OrderService;
 import io.quarkuscoffeeshop.coffeeshop.domain.commands.PlaceOrderCommand;
 import io.vertx.mutiny.core.eventbus.EventBus;
-import org.eclipse.microprofile.reactive.messaging.Channel;
-import org.eclipse.microprofile.reactive.messaging.Emitter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,9 +29,6 @@ public class CoffeeshopApiResource {
     @Inject
     EventBus eventBus;
 
-
-//    @Channel("web-updates-out")
-//    Emitter<String> webUpdater;
 
     @POST
     @Path("/order")

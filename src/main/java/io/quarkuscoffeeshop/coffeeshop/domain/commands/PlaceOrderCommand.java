@@ -1,11 +1,13 @@
 package io.quarkuscoffeeshop.coffeeshop.domain.commands;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.quarkuscoffeeshop.coffeeshop.domain.LineItem;
 import io.quarkuscoffeeshop.coffeeshop.domain.Location;
 import io.quarkuscoffeeshop.coffeeshop.domain.OrderSource;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 public class PlaceOrderCommand {
 
@@ -17,19 +19,37 @@ public class PlaceOrderCommand {
 
     private final String loyaltyMemberId;
 
-    private final List<LineItem> baristaLineLineItems;
+    private final List<LineItem> baristaLineItems;
 
-    private final List<LineItem> kitchenLineLineItems;
+    private final List<LineItem> kitchenLineItems;
 
     private final Instant timestamp;
 
-    public PlaceOrderCommand(final String id, final OrderSource orderSource, final Location location, final String loyaltyMemberId, final List<LineItem> baristaLineLineItems, final List<LineItem> kitchenLineLineItems) {
+    public PlaceOrderCommand(
+            @JsonProperty("id") final String id,
+            @JsonProperty("orderSource") final OrderSource orderSource,
+            @JsonProperty("location") final Location location,
+            @JsonProperty("loyaltyMemberId") final Optional<String> loyaltyMemberId,
+            @JsonProperty("baristaLineItems") final Optional<List<LineItem>> baristaLineItems,
+            @JsonProperty("kitchenLineItems") final Optional<List<LineItem>> kitchenLineItems) {
         this.id = id;
         this.orderSource = orderSource;
         this.location = location;
-        this.loyaltyMemberId = loyaltyMemberId;
-        this.baristaLineLineItems = baristaLineLineItems;
-        this.kitchenLineLineItems = kitchenLineLineItems;
+        if (loyaltyMemberId.isPresent()) {
+            this.loyaltyMemberId = loyaltyMemberId.get();
+        }else{
+            this.loyaltyMemberId = null;
+        }
+        if (baristaLineItems.isPresent()) {
+            this.baristaLineItems = baristaLineItems.get();
+        }else{
+            this.baristaLineItems = null;
+        }
+        if (kitchenLineItems.isPresent()) {
+            this.kitchenLineItems = kitchenLineItems.get();
+        }else{
+            this.kitchenLineItems = null;
+        }
         this.timestamp = Instant.now();
     }
 
@@ -40,8 +60,8 @@ public class PlaceOrderCommand {
                 ", orderSource=" + orderSource +
                 ", location=" + location +
                 ", loyaltyMemberId='" + loyaltyMemberId + '\'' +
-                ", baristaLineItems=" + baristaLineLineItems +
-                ", kitchenLineItems=" + kitchenLineLineItems +
+                ", baristaLineItems=" + baristaLineItems +
+                ", kitchenLineItems=" + kitchenLineItems +
                 ", timestamp=" + timestamp +
                 '}';
     }
@@ -58,9 +78,9 @@ public class PlaceOrderCommand {
         if (location != that.location) return false;
         if (loyaltyMemberId != null ? !loyaltyMemberId.equals(that.loyaltyMemberId) : that.loyaltyMemberId != null)
             return false;
-        if (baristaLineLineItems != null ? !baristaLineLineItems.equals(that.baristaLineLineItems) : that.baristaLineLineItems != null)
+        if (baristaLineItems != null ? !baristaLineItems.equals(that.baristaLineItems) : that.baristaLineItems != null)
             return false;
-        if (kitchenLineLineItems != null ? !kitchenLineLineItems.equals(that.kitchenLineLineItems) : that.kitchenLineLineItems != null)
+        if (kitchenLineItems != null ? !kitchenLineItems.equals(that.kitchenLineItems) : that.kitchenLineItems != null)
             return false;
         return timestamp != null ? timestamp.equals(that.timestamp) : that.timestamp == null;
     }
@@ -71,10 +91,22 @@ public class PlaceOrderCommand {
         result = 31 * result + (orderSource != null ? orderSource.hashCode() : 0);
         result = 31 * result + (location != null ? location.hashCode() : 0);
         result = 31 * result + (loyaltyMemberId != null ? loyaltyMemberId.hashCode() : 0);
-        result = 31 * result + (baristaLineLineItems != null ? baristaLineLineItems.hashCode() : 0);
-        result = 31 * result + (kitchenLineLineItems != null ? kitchenLineLineItems.hashCode() : 0);
+        result = 31 * result + (baristaLineItems != null ? baristaLineItems.hashCode() : 0);
+        result = 31 * result + (kitchenLineItems != null ? kitchenLineItems.hashCode() : 0);
         result = 31 * result + (timestamp != null ? timestamp.hashCode() : 0);
         return result;
+    }
+
+    public Optional<List<LineItem>> getBaristaLineItems() {
+        return Optional.ofNullable(baristaLineItems);
+    }
+
+    public Optional<List<LineItem>> getKitchenLineItems() {
+        return Optional.ofNullable(kitchenLineItems);
+    }
+
+    public Optional<String> getLoyaltyMemberId() {
+        return Optional.ofNullable(loyaltyMemberId);
     }
 
     public String getId() {
@@ -87,18 +119,6 @@ public class PlaceOrderCommand {
 
     public Location getLocation() {
         return location;
-    }
-
-    public String getLoyaltyMemberId() {
-        return loyaltyMemberId;
-    }
-
-    public List<LineItem> getBaristaLineItems() {
-        return baristaLineLineItems;
-    }
-
-    public List<LineItem> getKitchenLineItems() {
-        return kitchenLineLineItems;
     }
 
     public Instant getTimestamp() {

@@ -22,7 +22,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void onOrderIn(final PlaceOrderCommand placeOrderCommand) {
         logger.debug("PlaceOrderCommand received: {}", placeOrderCommand);
-        eventBus.send("web-updates", placeOrderCommand);
+        eventBus.<PlaceOrderCommand>send("web-updates", placeOrderCommand);
     }
 
     @Override

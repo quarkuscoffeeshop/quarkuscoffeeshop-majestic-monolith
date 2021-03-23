@@ -4,6 +4,7 @@ import io.quarkus.test.junit.QuarkusTest;
 import io.quarkuscoffeeshop.coffeeshop.TestUtils;
 import io.quarkuscoffeeshop.coffeeshop.counter.api.OrderService;
 import io.quarkuscoffeeshop.coffeeshop.domain.OrderUp;
+import io.vertx.mutiny.core.eventbus.EventBus;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,11 +21,17 @@ public class OrderServiceTest {
     @Inject
     OrderService orderService;
 
+    @Inject
+    EventBus eventBus;
+
     @Test
     public void testOnOrderIn() {
 
         assertNotNull(orderService);
         orderService.onOrderIn(TestUtils.mockPlaceOrderCommand());
+        eventBus.consumer("web-updates", message -> {
+            logger.info("message received: {}", message);
+        });
     }
 
 }

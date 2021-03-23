@@ -4,7 +4,6 @@ import io.quarkus.runtime.Startup;
 import io.smallrye.mutiny.Multi;
 import io.vertx.mutiny.core.eventbus.EventBus;
 import io.vertx.mutiny.core.eventbus.Message;
-import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,25 +19,17 @@ public class DashboardEndpoint {
 
     private static final Logger logger = LoggerFactory.getLogger(DashboardEndpoint.class);
 
-/*
-    @Inject
-    @Channel("web-updates")
-    @Broadcast
-    Publisher<String> updater;
-*/
     @Inject
     EventBus eventBus;
 
     @GET
     @Path("/stream")
-    @Produces(MediaType.SERVER_SENT_EVENTS) // denotes that server side events (SSE) will be produced
-//    @RestSseElementType("text/plain") // denotes that the contained data, within this SSE, is just regular text/plain data
+    @Produces(MediaType.SERVER_SENT_EVENTS)
     public Multi<String> dashboardStream() {
 
         return eventBus.<String>consumer("web-updates")
                 .toMulti()
                 .map(Message::body);
-                //.toMulti().onItem().transform(item -> item.body());
     }
 
 }
