@@ -31,7 +31,12 @@ public class OrderServiceImpl implements OrderService {
 
         OrderEventResult orderEventResult = Order.from(placeOrderCommand);
 
-        eventBus.send("web-updates", JsonUtil.toJson(placeOrderCommand));
+        logger.debug("sending {} web updates", orderEventResult.getOrderUpdates().size());
+        orderEventResult.getOrderUpdates().forEach(orderUpdate -> {
+            eventBus.send("web-updates", JsonUtil.toJson(orderUpdate));
+            logger.debug("sent web update: {}", orderUpdate);
+        });
+
     }
 
     @Override

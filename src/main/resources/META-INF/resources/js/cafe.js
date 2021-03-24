@@ -174,7 +174,7 @@
                 xhrObj.setRequestHeader("Accept","application/json");
             },
             type: "POST",
-            url: "/order",
+            url: "/api/order",
             data: JSON.stringify(order),
             success: function(){ console.log('success for ' + JSON.stringify(order)); },
             contentType: 'application/json',

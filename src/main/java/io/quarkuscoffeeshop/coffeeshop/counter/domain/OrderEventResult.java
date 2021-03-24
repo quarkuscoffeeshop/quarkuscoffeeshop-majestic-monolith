@@ -7,6 +7,7 @@ import io.quarkuscoffeeshop.coffeeshop.domain.valueobjects.OrderUpdate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class OrderEventResult {
 
@@ -26,6 +27,33 @@ public class OrderEventResult {
         this.baristaTickets = baristaTickets;
         this.kitchenTickets = kitchenTickets;
         this.orderUpdates = orderUpdates;
+    }
+
+    @Override
+    public String toString() {
+        return "OrderEventResult";
+/*
+        StringBuilder stringBuilder = new StringBuilder("OrderEventResult{order=")
+                .append(order.getOrderId())
+                .append(", baristaTickets=[");
+                if(getBaristaTickets().isPresent()){
+                    stringBuilder.append(
+                            getBaristaTickets().get().stream()
+                                    .map(OrderIn::toString)
+                                    .collect(Collectors.joining(",")));
+                }
+                stringBuilder.append("], kitchenTickets=[");
+                if (getKitchenTickets().isPresent()) {
+                    stringBuilder.append(
+                            getKitchenTickets().get().stream()
+                                    .map(OrderIn::toString)
+                                    .collect(Collectors.joining(",")));
+                }
+                stringBuilder.append("]");
+                stringBuilder.append(getOrderUpdates().stream().map(OrderUpdate::toString).collect(Collectors.joining(",")))
+                        .append("]}");
+                return stringBuilder.toString();
+*/
     }
 
     public void addUpdate(final OrderUpdate orderUpdate) {

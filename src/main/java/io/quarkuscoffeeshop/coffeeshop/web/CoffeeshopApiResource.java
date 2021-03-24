@@ -29,11 +29,10 @@ public class CoffeeshopApiResource {
     @Inject
     EventBus eventBus;
 
-
     @POST
     @Path("/order")
     @Transactional
-    public Response placeOrder(PlaceOrderCommand placeOrderCommand) {
+    public Response placeOrder(final PlaceOrderCommand placeOrderCommand) {
 
         logger.info("PlaceOrderCommand received: {}", placeOrderCommand);
         orderService.onOrderIn(placeOrderCommand);

@@ -47,7 +47,7 @@ public class Order {
 
     }
 
-    private Order(String orderId){
+    private Order(String orderId) {
         this.orderId = orderId;
         this.timestamp = Instant.now();
     }
@@ -61,48 +61,49 @@ public class Order {
      */
     public static OrderEventResult from(final PlaceOrderCommand placeOrderCommand) {
 
-            // create the return value
-            OrderEventResult orderEventResult = new OrderEventResult();
 
-            // build the order from the PlaceOrderCommand
-            Order order = new Order(placeOrderCommand.getId());
-            order.setOrderSource(placeOrderCommand.getOrderSource());
-            order.setLocation(placeOrderCommand.getLocation());
-            order.setTimestamp(placeOrderCommand.getTimestamp());
-            order.setOrderStatus(OrderStatus.IN_PROGRESS);
+        // build the order from the PlaceOrderCommand
+        Order order = new Order(placeOrderCommand.getId());
+        order.setOrderSource(placeOrderCommand.getOrderSource());
+        order.setLocation(placeOrderCommand.getLocation());
+        order.setTimestamp(placeOrderCommand.getTimestamp());
+        order.setOrderStatus(OrderStatus.IN_PROGRESS);
 
-            if (placeOrderCommand.getBaristaLineItems().isPresent()) {
-                logger.debug("createOrderFromCommand adding beverages {}", placeOrderCommand.getBaristaLineItems().get().size());
+        // create the return value
+        OrderEventResult orderEventResult = new OrderEventResult();
 
-                logger.debug("adding Barista LineItems");
-                placeOrderCommand.getBaristaLineItems().get().forEach(commandItem -> {
-                    logger.debug("createOrderFromCommand adding baristaItem from {}", commandItem.toString());
-                    LineItem lineItem = new LineItem(commandItem.item, commandItem.name, commandItem.price, ItemStatus.IN_PROGRESS, order);
-                    order.addBaristaLineItem(lineItem);
-                    logger.debug("added LineItem: {}", order.getBaristaLineItems().get().size());
-                    orderEventResult.addBaristaTicket(new OrderIn(order.getOrderId(), lineItem.getItemId(), lineItem.getItem(), lineItem.getName()));
-                    logger.debug("Added Barista Ticket to OrderEventResult: {}", orderEventResult.getBaristaTickets().get().size());
-                    orderEventResult.addUpdate(new OrderUpdate(order.getOrderId(), lineItem.getItemId(), lineItem.getName(), lineItem.getItem(), OrderStatus.IN_PROGRESS));
-                    logger.debug("Added Order Update to OrderEventResult: ", orderEventResult.getOrderUpdates().size());
-                });
-            }
-            logger.debug("adding Kitchen LineItems");
-            if (placeOrderCommand.getKitchenLineItems().isPresent()) {
-                logger.debug("createOrderFromCommand adding kitchenOrders {}", placeOrderCommand.getKitchenLineItems().get().size());
-                placeOrderCommand.getKitchenLineItems().get().forEach(commandItem -> {
-                    logger.debug("createOrderFromCommand adding kitchenItem from {}", commandItem.toString());
-                    LineItem lineItem = new LineItem(commandItem.item, commandItem.name, commandItem.price, ItemStatus.IN_PROGRESS, order);
-                    order.addKitchenLineItem(lineItem);
-                    orderEventResult.addKitchenTicket(new OrderIn(order.getOrderId(), lineItem.getItemId(), lineItem.getItem(), lineItem.getName()));
-                    orderEventResult.addUpdate(new OrderUpdate(order.getOrderId(), lineItem.getItemId(), lineItem.getName(), lineItem.getItem(), OrderStatus.IN_PROGRESS));
-                });
-            }
+        if (placeOrderCommand.getBaristaItems().isPresent()) {
+            logger.debug("createOrderFromCommand adding beverages {}", placeOrderCommand.getBaristaItems().get().size());
 
-            orderEventResult.setOrder(order);
-            logger.debug("Added Order and OrderCreatedEvent to OrderEventResult: {}", orderEventResult);
+            logger.debug("adding Barista LineItems");
+            placeOrderCommand.getBaristaItems().get().forEach(commandItem -> {
+                logger.debug("createOrderFromCommand adding baristaItem from {}", commandItem.toString());
+                LineItem lineItem = new LineItem(commandItem.item, commandItem.name, commandItem.price, ItemStatus.IN_PROGRESS, order);
+                order.addBaristaLineItem(lineItem);
+                logger.debug("added LineItem: {}", order.getBaristaLineItems().get().size());
+                orderEventResult.addBaristaTicket(new OrderIn(order.getOrderId(), lineItem.getItemId(), lineItem.getItem(), lineItem.getName()));
+                logger.debug("Added Barista Ticket to OrderEventResult: {}", orderEventResult.getBaristaTickets().get().size());
+                orderEventResult.addUpdate(new OrderUpdate(order.getOrderId(), lineItem.getItemId(), lineItem.getName(), lineItem.getItem(), OrderStatus.IN_PROGRESS));
+                logger.debug("Added Order Update to OrderEventResult: ", orderEventResult.getOrderUpdates().size());
+            });
+        }
+        logger.debug("adding Kitchen LineItems");
+        if (placeOrderCommand.getKitchenItems().isPresent()) {
+            logger.debug("createOrderFromCommand adding kitchenOrders {}", placeOrderCommand.getKitchenItems().get().size());
+            placeOrderCommand.getKitchenItems().get().forEach(commandItem -> {
+                logger.debug("createOrderFromCommand adding kitchenItem from {}", commandItem.toString());
+                LineItem lineItem = new LineItem(commandItem.item, commandItem.name, commandItem.price, ItemStatus.IN_PROGRESS, order);
+                order.addKitchenLineItem(lineItem);
+                orderEventResult.addKitchenTicket(new OrderIn(order.getOrderId(), lineItem.getItemId(), lineItem.getItem(), lineItem.getName()));
+                orderEventResult.addUpdate(new OrderUpdate(order.getOrderId(), lineItem.getItemId(), lineItem.getName(), lineItem.getItem(), OrderStatus.IN_PROGRESS));
+            });
+        }
 
-            logger.debug("returning {}", orderEventResult);
-            return orderEventResult;
+        orderEventResult.setOrder(order);
+        logger.debug("Added Order and OrderCreatedEvent to OrderEventResult: {}", orderEventResult);
+
+        logger.debug("returning {}", orderEventResult);
+        return orderEventResult;
     }
 
     /**

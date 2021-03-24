@@ -1,5 +1,6 @@
 package io.quarkuscoffeeshop.coffeeshop.domain.commands;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.quarkuscoffeeshop.coffeeshop.domain.Item;
 
 import java.math.BigDecimal;
@@ -16,7 +17,10 @@ public class CommandItem {
 
     public final BigDecimal price;
 
-    public CommandItem(Item item, String name, BigDecimal price) {
+    public CommandItem(
+            @JsonProperty("item") Item item,
+            @JsonProperty("name") String name,
+            @JsonProperty("price") BigDecimal price) {
         this.item = item;
         this.name = name;
         this.price = price;
