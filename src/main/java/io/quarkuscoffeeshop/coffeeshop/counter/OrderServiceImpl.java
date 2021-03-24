@@ -1,5 +1,6 @@
 package io.quarkuscoffeeshop.coffeeshop.counter;
 
+import io.quarkuscoffeeshop.coffeeshop.barista.api.Barista;
 import io.quarkuscoffeeshop.coffeeshop.counter.api.OrderService;
 import io.quarkuscoffeeshop.coffeeshop.counter.domain.OrderEventResult;
 import io.quarkuscoffeeshop.coffeeshop.domain.Order;
@@ -18,6 +19,9 @@ import javax.inject.Inject;
 public class OrderServiceImpl implements OrderService {
 
     Logger logger = LoggerFactory.getLogger(OrderServiceImpl.class);
+
+    @Inject
+    Barista barista;
 
     @Inject
     EventBus eventBus;

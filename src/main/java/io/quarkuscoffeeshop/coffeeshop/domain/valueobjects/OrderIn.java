@@ -7,7 +7,7 @@ import java.time.Instant;
 /**
  * A value object encapsulating the information sent to Barista and Kitchen
  */
-public class OrderTicket {
+public class OrderIn {
 
     public final String orderId;
 
@@ -19,7 +19,7 @@ public class OrderTicket {
 
     public final Instant timestamp;
 
-    public OrderTicket(String orderId, String lineItemId, Item item, String name) {
+    public OrderIn(String orderId, String lineItemId, Item item, String name) {
         this.orderId = orderId;
         this.lineItemId = lineItemId;
         this.item = item;
@@ -43,7 +43,7 @@ public class OrderTicket {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        OrderTicket that = (OrderTicket) o;
+        OrderIn that = (OrderIn) o;
 
         if (orderId != null ? !orderId.equals(that.orderId) : that.orderId != null) return false;
         if (lineItemId != null ? !lineItemId.equals(that.lineItemId) : that.lineItemId != null) return false;

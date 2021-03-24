@@ -1,7 +1,7 @@
 package io.quarkuscoffeeshop.coffeeshop.barista.api;
 
-import io.quarkuscoffeeshop.coffeeshop.domain.OrderIn;
-import io.quarkuscoffeeshop.coffeeshop.domain.OrderUp;
+import io.quarkuscoffeeshop.coffeeshop.domain.valueobjects.OrderIn;
+import io.quarkuscoffeeshop.coffeeshop.domain.valueobjects.OrderUp;
 
 public interface Barista {
 

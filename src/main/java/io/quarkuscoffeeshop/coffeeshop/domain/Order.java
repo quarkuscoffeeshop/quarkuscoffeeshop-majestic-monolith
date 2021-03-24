@@ -2,7 +2,7 @@ package io.quarkuscoffeeshop.coffeeshop.domain;
 
 import io.quarkuscoffeeshop.coffeeshop.counter.domain.OrderEventResult;
 import io.quarkuscoffeeshop.coffeeshop.domain.commands.PlaceOrderCommand;
-import io.quarkuscoffeeshop.coffeeshop.domain.valueobjects.OrderTicket;
+import io.quarkuscoffeeshop.coffeeshop.domain.valueobjects.OrderIn;
 import io.quarkuscoffeeshop.coffeeshop.domain.valueobjects.OrderUpdate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,11 +43,14 @@ public class Order {
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "order", cascade = CascadeType.ALL)
     private List<LineItem> kitchenLineItems;
 
+    protected Order() {
+
+    }
+
     private Order(String orderId){
         this.orderId = orderId;
         this.timestamp = Instant.now();
     }
-
 
     /**
      * Creates a new Order and corresponding updates from a PlaceOrderCommand
@@ -77,7 +80,7 @@ public class Order {
                     LineItem lineItem = new LineItem(commandItem.item, commandItem.name, commandItem.price, ItemStatus.IN_PROGRESS, order);
                     order.addBaristaLineItem(lineItem);
                     logger.debug("added LineItem: {}", order.getBaristaLineItems().get().size());
-                    orderEventResult.addBaristaTicket(new OrderTicket(order.getOrderId(), lineItem.getItemId(), lineItem.getItem(), lineItem.getName()));
+                    orderEventResult.addBaristaTicket(new OrderIn(order.getOrderId(), lineItem.getItemId(), lineItem.getItem(), lineItem.getName()));
                     logger.debug("Added Barista Ticket to OrderEventResult: {}", orderEventResult.getBaristaTickets().get().size());
                     orderEventResult.addUpdate(new OrderUpdate(order.getOrderId(), lineItem.getItemId(), lineItem.getName(), lineItem.getItem(), OrderStatus.IN_PROGRESS));
                     logger.debug("Added Order Update to OrderEventResult: ", orderEventResult.getOrderUpdates().size());
@@ -90,7 +93,7 @@ public class Order {
                     logger.debug("createOrderFromCommand adding kitchenItem from {}", commandItem.toString());
                     LineItem lineItem = new LineItem(commandItem.item, commandItem.name, commandItem.price, ItemStatus.IN_PROGRESS, order);
                     order.addKitchenLineItem(lineItem);
-                    orderEventResult.addKitchenTicket(new OrderTicket(order.getOrderId(), lineItem.getItemId(), lineItem.getItem(), lineItem.getName()));
+                    orderEventResult.addKitchenTicket(new OrderIn(order.getOrderId(), lineItem.getItemId(), lineItem.getItem(), lineItem.getName()));
                     orderEventResult.addUpdate(new OrderUpdate(order.getOrderId(), lineItem.getItemId(), lineItem.getName(), lineItem.getItem(), OrderStatus.IN_PROGRESS));
                 });
             }

@@ -1,7 +1,7 @@
 package io.quarkuscoffeeshop.coffeeshop.counter.domain;
 
 import io.quarkuscoffeeshop.coffeeshop.domain.Order;
-import io.quarkuscoffeeshop.coffeeshop.domain.valueobjects.OrderTicket;
+import io.quarkuscoffeeshop.coffeeshop.domain.valueobjects.OrderIn;
 import io.quarkuscoffeeshop.coffeeshop.domain.valueobjects.OrderUpdate;
 
 import java.util.ArrayList;
@@ -12,16 +12,16 @@ public class OrderEventResult {
 
     private Order order;
 
-    private List<OrderTicket> baristaTickets;
+    private List<OrderIn> baristaTickets;
 
-    private List<OrderTicket> kitchenTickets;
+    private List<OrderIn> kitchenTickets;
 
     private List<OrderUpdate> orderUpdates;
 
     public OrderEventResult() {
     }
 
-    public OrderEventResult(Order order, List<OrderTicket> baristaTickets, List<OrderTicket> kitchenTickets, List<OrderUpdate> orderUpdates) {
+    public OrderEventResult(Order order, List<OrderIn> baristaTickets, List<OrderIn> kitchenTickets, List<OrderUpdate> orderUpdates) {
         this.order = order;
         this.baristaTickets = baristaTickets;
         this.kitchenTickets = kitchenTickets;
@@ -35,25 +35,25 @@ public class OrderEventResult {
         this.orderUpdates.add(orderUpdate);
     }
 
-    public void addBaristaTicket(final OrderTicket orderTicket) {
+    public void addBaristaTicket(final OrderIn orderIn) {
         if (this.baristaTickets == null) {
             this.baristaTickets = new ArrayList<>();
         }
-        this.baristaTickets.add(orderTicket);
+        this.baristaTickets.add(orderIn);
     }
 
-    public void addKitchenTicket(final OrderTicket orderTicket) {
+    public void addKitchenTicket(final OrderIn orderIn) {
         if (this.kitchenTickets == null) {
             this.kitchenTickets = new ArrayList<>();
         }
-        this.kitchenTickets.add(orderTicket);
+        this.kitchenTickets.add(orderIn);
     }
 
-    public Optional<List<OrderTicket>> getBaristaTickets() {
+    public Optional<List<OrderIn>> getBaristaTickets() {
         return Optional.ofNullable(baristaTickets);
     }
 
-    public Optional<List<OrderTicket>> getKitchenTickets() {
+    public Optional<List<OrderIn>> getKitchenTickets() {
         return Optional.ofNullable(kitchenTickets);
     }
 
@@ -67,11 +67,11 @@ public class OrderEventResult {
         this.order = order;
     }
 
-    public void setBaristaTickets(List<OrderTicket> baristaTickets) {
+    public void setBaristaTickets(List<OrderIn> baristaTickets) {
         this.baristaTickets = baristaTickets;
     }
 
-    public void setKitchenTickets(List<OrderTicket> kitchenTickets) {
+    public void setKitchenTickets(List<OrderIn> kitchenTickets) {
         this.kitchenTickets = kitchenTickets;
     }
 
