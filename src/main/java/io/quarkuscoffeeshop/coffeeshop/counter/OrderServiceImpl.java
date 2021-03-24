@@ -4,15 +4,14 @@ import io.quarkuscoffeeshop.coffeeshop.barista.api.Barista;
 import io.quarkuscoffeeshop.coffeeshop.counter.api.OrderService;
 import io.quarkuscoffeeshop.coffeeshop.counter.domain.OrderEventResult;
 import io.quarkuscoffeeshop.coffeeshop.domain.Order;
-import io.quarkuscoffeeshop.coffeeshop.domain.OrderUp;
 import io.quarkuscoffeeshop.coffeeshop.domain.commands.PlaceOrderCommand;
+import io.quarkuscoffeeshop.coffeeshop.domain.valueobjects.OrderUp;
 import io.quarkuscoffeeshop.utils.JsonUtil;
 import io.vertx.core.eventbus.EventBus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.context.Initialized;
 import javax.inject.Inject;
 
 @ApplicationScoped

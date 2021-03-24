@@ -12,6 +12,7 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @QuarkusTest
@@ -26,5 +27,6 @@ public class BaristaTest {
         OrderUp orderUp = barista.make(orderIn);
         assertNotNull(orderUp);
         assertNotNull(orderUp.madeBy);
+        assertEquals(orderIn.orderId, orderUp.orderId);
     }
 }
