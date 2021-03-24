@@ -1,6 +1,8 @@
 package io.quarkuscoffeeshop.coffeeshop.counter;
 
 import io.quarkuscoffeeshop.coffeeshop.counter.api.OrderService;
+import io.quarkuscoffeeshop.coffeeshop.counter.domain.OrderEventResult;
+import io.quarkuscoffeeshop.coffeeshop.domain.Order;
 import io.quarkuscoffeeshop.coffeeshop.domain.OrderUp;
 import io.quarkuscoffeeshop.coffeeshop.domain.commands.PlaceOrderCommand;
 import io.quarkuscoffeeshop.utils.JsonUtil;
@@ -23,6 +25,9 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void onOrderIn(final PlaceOrderCommand placeOrderCommand) {
         logger.debug("PlaceOrderCommand received: {}", placeOrderCommand);
+
+        OrderEventResult orderEventResult = Order.from(placeOrderCommand);
+
         eventBus.send("web-updates", JsonUtil.toJson(placeOrderCommand));
     }
 

@@ -1,17 +1,14 @@
 package io.quarkuscoffeeshop.coffeeshop.counter;
 
 import io.quarkus.test.junit.QuarkusTest;
-import io.quarkuscoffeeshop.coffeeshop.TestUtils;
+import io.quarkuscoffeeshop.coffeeshop.utils.TestUtils;
 import io.quarkuscoffeeshop.coffeeshop.counter.api.OrderService;
-import io.quarkuscoffeeshop.coffeeshop.domain.commands.PlaceOrderCommand;
-import io.quarkuscoffeeshop.utils.JsonUtil;
 import io.vertx.mutiny.core.eventbus.EventBus;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import java.util.concurrent.Callable;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertNotNull;

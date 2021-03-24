@@ -1,12 +1,8 @@
 package io.quarkuscoffeeshop.coffeeshop.web;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.quarkus.test.junit.QuarkusTest;
-import io.quarkuscoffeeshop.coffeeshop.TestUtils;
+import io.quarkuscoffeeshop.coffeeshop.utils.TestUtils;
 import io.quarkuscoffeeshop.utils.JsonUtil;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +27,11 @@ public class CoffeeshopApiResourceTest {
                 .body(JsonUtil.toJson(TestUtils.mockPlaceOrderCommand()))
                 .then()
                 .statusCode(202);
+
+    }
+
+    @Test
+    public void testPlaceOrderForSingleCroissant() {
 
     }
 }

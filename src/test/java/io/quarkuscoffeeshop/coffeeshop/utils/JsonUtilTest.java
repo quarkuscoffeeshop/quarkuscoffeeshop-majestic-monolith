@@ -1,6 +1,5 @@
 package io.quarkuscoffeeshop.coffeeshop.utils;
 
-import io.quarkuscoffeeshop.coffeeshop.TestUtils;
 import io.quarkuscoffeeshop.coffeeshop.domain.commands.PlaceOrderCommand;
 import io.quarkuscoffeeshop.utils.JsonUtil;
 import org.junit.jupiter.api.Test;
