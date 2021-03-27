@@ -3,11 +3,15 @@ package io.quarkuscoffeeshop.coffeeshop.barista;
 import io.quarkuscoffeeshop.coffeeshop.barista.api.Barista;
 import io.quarkuscoffeeshop.coffeeshop.domain.valueobjects.OrderIn;
 import io.quarkuscoffeeshop.coffeeshop.domain.valueobjects.OrderUp;
+import io.smallrye.mutiny.Multi;
+import io.smallrye.mutiny.Uni;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
+import java.time.Duration;
 import java.time.Instant;
+import java.util.List;
 
 @ApplicationScoped
 public class BaristaImpl implements Barista {
@@ -40,6 +44,40 @@ public class BaristaImpl implements Barista {
                 break;
         };
         return prepare(orderIn, delay);
+    }
+
+    @Override
+    public Uni<OrderUp> makeReactively(OrderIn orderIn) {
+        return Uni.createFrom().item(orderIn)
+                .onItem()
+                .transform(item -> {
+                    return new OrderUp(
+                            item.orderId,
+                            item.lineItemId,
+                            item.item,
+                            item.name,
+                            Instant.now(),
+                            madeBy);
+                })
+                .onItem()
+                .delayIt()
+                .by(Duration.ofSeconds(5));
+    }
+
+    @Override
+    public Multi<List<OrderUp>> batchReactively(List<OrderIn> orders) {
+        Multi<OrderIn> incoming = Multi.createFrom().iterable(orders);
+        incoming
+                .onItem()
+                .transform(item -> {
+                    return new OrderUp(
+                            item.orderId,
+                            item.lineItemId,
+                            item.item,
+                            item.name,
+                            Instant.now(),
+                            madeBy);
+                });
     }
 
     private OrderUp prepare(OrderIn orderIn, int delay) {
