@@ -1,6 +1,7 @@
 package io.quarkuscoffeeshop.coffeeshop.barista;
 
 import io.quarkuscoffeeshop.coffeeshop.barista.api.Barista;
+import io.quarkuscoffeeshop.coffeeshop.domain.Item;
 import io.quarkuscoffeeshop.coffeeshop.domain.valueobjects.OrderIn;
 import io.quarkuscoffeeshop.coffeeshop.domain.valueobjects.OrderUp;
 import io.smallrye.mutiny.Multi;
@@ -12,6 +13,7 @@ import javax.enterprise.context.ApplicationScoped;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
+import java.util.function.Supplier;
 
 @ApplicationScoped
 public class BaristaImpl implements Barista {
@@ -65,19 +67,75 @@ public class BaristaImpl implements Barista {
     }
 
     @Override
-    public Multi<List<OrderUp>> batchReactively(List<OrderIn> orders) {
-        Multi<OrderIn> incoming = Multi.createFrom().iterable(orders);
-        incoming
-                .onItem()
-                .transform(item -> {
-                    return new OrderUp(
-                            item.orderId,
-                            item.lineItemId,
-                            item.item,
-                            item.name,
-                            Instant.now(),
-                            madeBy);
-                });
+    public Multi<OrderUp> batchReactively(List<OrderIn> orders) {
+        return Multi.createFrom().iterable(orders).onItem().transform(
+                orderIn -> {
+                    return prepareBeverageWithDelay(orderIn);
+        });
+    }
+
+    private OrderUp prepareBeverageWithDelay(OrderIn orderIn) {
+        try {
+            Thread.sleep(calculateDelay(orderIn.item) * 1000);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        return new OrderUp(
+                orderIn.orderId,
+                orderIn.lineItemId,
+                orderIn.item,
+                orderIn.name,
+                Instant.now(),
+                madeBy);
+    }
+
+    private Uni<OrderUp> prepareWithDelay(OrderIn orderIn) {
+
+        // return the completed drink
+        return Uni.createFrom().item(new OrderUpSupplier(orderIn));
+    }
+
+    class OrderUpSupplier implements Supplier<OrderUp> {
+
+        OrderUp orderUp;
+
+        protected OrderUpSupplier(OrderIn orderIn) {
+            orderUp = new OrderUp(
+                    orderIn.orderId,
+                    orderIn.lineItemId,
+                    orderIn.item,
+                    orderIn.name,
+                    Instant.now(),
+                    madeBy);
+        }
+
+        @Override
+        public OrderUp get() {
+            try {
+                Thread.sleep(calculateDelay(orderUp.item) * 1000);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+            return orderUp;
+        }
+    }
+
+
+    private int calculateDelay(final Item item) {
+        switch (item) {
+            case COFFEE_BLACK:
+                return 5;
+            case COFFEE_WITH_ROOM:
+                return 5;
+            case ESPRESSO:
+                return 7;
+            case ESPRESSO_DOUBLE:
+                return 7;
+            case CAPPUCCINO:
+                return 10;
+            default:
+                return 3;
+        }
     }
 
     private OrderUp prepare(OrderIn orderIn, int delay) {

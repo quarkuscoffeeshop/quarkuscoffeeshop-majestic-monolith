@@ -13,5 +13,5 @@ public interface Barista {
 
     Uni<OrderUp> makeReactively(OrderIn orderIn);
 
-    Multi<List<OrderUp>> batchReactively(List<OrderIn> orders);
+    Multi<OrderUp> batchReactively(List<OrderIn> orders);
 }

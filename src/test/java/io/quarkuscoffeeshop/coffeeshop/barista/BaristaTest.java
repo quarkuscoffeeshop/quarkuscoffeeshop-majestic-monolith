@@ -5,6 +5,7 @@ import io.quarkuscoffeeshop.coffeeshop.barista.api.Barista;
 import io.quarkuscoffeeshop.coffeeshop.domain.Item;
 import io.quarkuscoffeeshop.coffeeshop.domain.valueobjects.OrderIn;
 import io.quarkuscoffeeshop.coffeeshop.domain.valueobjects.OrderUp;
+import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
 import io.smallrye.mutiny.subscription.Cancellable;
 import org.junit.jupiter.api.Test;
@@ -17,6 +18,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.*;
@@ -62,7 +64,33 @@ public class BaristaTest {
                 new OrderIn(UUID.randomUUID().toString(), UUID.randomUUID().toString(), Item.COFFEE_BLACK, "Spock"),
                 new OrderIn(UUID.randomUUID().toString(), UUID.randomUUID().toString(), Item.COFFEE_BLACK, "Kirk")
         );
-        barista.batchReactively(orders);
+        Multi<OrderUp> results = barista.batchReactively(orders);
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            assertNull(e);
+        }
+        assertEquals(2, results.subscribe().asStream().count());
     }
 
+    @Test
+    public void testMultiBlackCoffeeTakesAtLeast5Seconds() {
+        List<OrderIn> orders = Arrays.asList(
+                new OrderIn(UUID.randomUUID().toString(), UUID.randomUUID().toString(), Item.COFFEE_BLACK, "Spock"),
+                new OrderIn(UUID.randomUUID().toString(), UUID.randomUUID().toString(), Item.COFFEE_BLACK, "Kirk")
+        );
+        Multi<OrderUp> results = barista.batchReactively(orders);
+        logger.debug("now we sleep");
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            assertNull(e);
+        }
+        logger.debug("now we wake");
+        Stream<OrderUp> ordersUp = results.subscribe().asStream();
+//        assertEquals(2, ordersUp.count());
+        assertTrue(ordersUp.allMatch(orderUp -> {
+            return orderUp.item == Item.COFFEE_BLACK;
+        }));
+    }
 }
