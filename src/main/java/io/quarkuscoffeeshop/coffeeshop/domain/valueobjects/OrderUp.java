@@ -1,5 +1,7 @@
 package io.quarkuscoffeeshop.coffeeshop.domain.valueobjects;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.quarkuscoffeeshop.coffeeshop.domain.Item;
 
 import java.time.Instant;
@@ -8,8 +10,18 @@ public class OrderUp extends OrderIn{
 
     public final String madeBy;
 
-    public OrderUp(String orderId, String lineItemId, Item item, String name, Instant now, String madeBy) {
+    public final Instant timestamp;
+
+    @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+    public OrderUp(
+            @JsonProperty("orderId") String orderId,
+            @JsonProperty("lineItemId") String lineItemId,
+            @JsonProperty("item") Item item,
+            @JsonProperty("name") String name,
+            @JsonProperty("timestamp") Instant timestamp,
+            @JsonProperty("madeBy") String madeBy) {
         super(orderId, lineItemId, item, name);
+        this.timestamp = timestamp;
         this.madeBy = madeBy;
     }
 

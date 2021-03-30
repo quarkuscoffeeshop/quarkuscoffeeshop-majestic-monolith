@@ -1,8 +1,11 @@
 package io.quarkuscoffeeshop.coffeeshop.domain;
 
+import io.quarkus.hibernate.orm.panache.PanacheEntity;
+import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import io.quarkuscoffeeshop.coffeeshop.counter.domain.OrderEventResult;
 import io.quarkuscoffeeshop.coffeeshop.domain.commands.PlaceOrderCommand;
 import io.quarkuscoffeeshop.coffeeshop.domain.valueobjects.OrderIn;
+import io.quarkuscoffeeshop.coffeeshop.domain.valueobjects.OrderUp;
 import io.quarkuscoffeeshop.coffeeshop.domain.valueobjects.OrderUpdate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +18,7 @@ import java.util.Optional;
 
 @Entity
 @Table(name = "Orders")
-public class Order {
+public class Order extends PanacheEntityBase {
 
     @Transient
     static Logger logger = LoggerFactory.getLogger(Order.class);
@@ -103,6 +106,18 @@ public class Order {
         logger.debug("Added Order and OrderCreatedEvent to OrderEventResult: {}", orderEventResult);
 
         logger.debug("returning {}", orderEventResult);
+        return orderEventResult;
+    }
+
+    public static OrderEventResult apply(final OrderUp orderUp) {
+        OrderEventResult orderEventResult = new OrderEventResult();
+        orderEventResult.addUpdate(new OrderUpdate(
+                orderUp.orderId,
+                orderUp.lineItemId,
+                orderUp.name,
+                orderUp.item,
+                OrderStatus.FULFILLED,
+                orderUp.madeBy));
         return orderEventResult;
     }
 
