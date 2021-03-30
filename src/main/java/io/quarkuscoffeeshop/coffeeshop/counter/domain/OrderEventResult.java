@@ -31,8 +31,6 @@ public class OrderEventResult {
 
     @Override
     public String toString() {
-        return "OrderEventResult";
-/*
         StringBuilder stringBuilder = new StringBuilder("OrderEventResult{order=")
                 .append(order.getOrderId())
                 .append(", baristaTickets=[");
@@ -53,7 +51,6 @@ public class OrderEventResult {
                 stringBuilder.append(getOrderUpdates().stream().map(OrderUpdate::toString).collect(Collectors.joining(",")))
                         .append("]}");
                 return stringBuilder.toString();
-*/
     }
 
     public void addUpdate(final OrderUpdate orderUpdate) {

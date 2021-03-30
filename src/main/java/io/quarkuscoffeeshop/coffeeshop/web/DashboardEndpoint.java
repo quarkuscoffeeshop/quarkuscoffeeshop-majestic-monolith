@@ -13,7 +13,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-@Startup
+import static io.quarkuscoffeeshop.coffeeshop.eventbus.EventBusTopics.WEB_UPDATES;
+
 @Path("/dashboard")
 public class DashboardEndpoint {
 
@@ -27,7 +28,7 @@ public class DashboardEndpoint {
     @Produces(MediaType.SERVER_SENT_EVENTS)
     public Multi<String> dashboardStream() {
 
-        return eventBus.<String>consumer("web-updates")
+        return eventBus.<String>consumer(WEB_UPDATES)
                 .toMulti()
                 .map(Message::body);
     }

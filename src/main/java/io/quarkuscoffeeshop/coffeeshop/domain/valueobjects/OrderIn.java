@@ -1,5 +1,7 @@
 package io.quarkuscoffeeshop.coffeeshop.domain.valueobjects;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.quarkuscoffeeshop.coffeeshop.domain.Item;
 
 import java.time.Instant;
@@ -19,7 +21,12 @@ public class OrderIn {
 
     public final Instant timestamp;
 
-    public OrderIn(String orderId, String lineItemId, Item item, String name) {
+    @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+    public OrderIn(
+            @JsonProperty("orderId") String orderId,
+            @JsonProperty("lineItemId") String lineItemId,
+            @JsonProperty("item") Item item,
+            @JsonProperty("name") String name) {
         this.orderId = orderId;
         this.lineItemId = lineItemId;
         this.item = item;
