@@ -7,6 +7,7 @@ import io.quarkuscoffeeshop.coffeeshop.domain.commands.PlaceOrderCommand;
 import io.quarkuscoffeeshop.coffeeshop.domain.valueobjects.OrderIn;
 import io.quarkuscoffeeshop.coffeeshop.domain.valueobjects.OrderUp;
 import io.quarkuscoffeeshop.coffeeshop.domain.valueobjects.OrderUpdate;
+import io.smallrye.mutiny.Uni;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,6 +16,8 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Entity
 @Table(name = "Orders")
@@ -55,6 +58,9 @@ public class Order extends PanacheEntityBase {
         this.timestamp = Instant.now();
     }
 
+    public static Uni<OrderEventResult> fromAsync(final PlaceOrderCommand placeOrderCommand) {
+        return Uni.createFrom().item(from(placeOrderCommand));
+    }
     /**
      * Creates a new Order and corresponding updates from a PlaceOrderCommand
      *
@@ -109,8 +115,11 @@ public class Order extends PanacheEntityBase {
         return orderEventResult;
     }
 
-    public static OrderEventResult apply(final OrderUp orderUp) {
+    public OrderEventResult apply(final OrderUp orderUp) {
+
+        logger.debug("applying orderUp: {}", orderUp);
         OrderEventResult orderEventResult = new OrderEventResult();
+
         orderEventResult.addUpdate(new OrderUpdate(
                 orderUp.orderId,
                 orderUp.lineItemId,
@@ -118,6 +127,53 @@ public class Order extends PanacheEntityBase {
                 orderUp.item,
                 OrderStatus.FULFILLED,
                 orderUp.madeBy));
+
+        // loop through barista tickets and update this line item
+        if (this.getBaristaLineItems().isPresent()) {
+            this.getBaristaLineItems().get().forEach(baristaLineItem -> {
+                if (baristaLineItem.getItemId().equals(orderUp.lineItemId)) {
+                    baristaLineItem.setItemStatus(ItemStatus.FULFILLED);
+                    orderEventResult.addUpdate(new OrderUpdate(orderUp.orderId, orderUp.lineItemId, orderUp.name, orderUp.item, OrderStatus.FULFILLED, orderUp.madeBy));
+                }
+            });
+        }
+        if (this.getKitchenLineItems().isPresent()) {
+            this.getKitchenLineItems().get().forEach(kitchenLineItem -> {
+                if (kitchenLineItem.getItemId().equals(orderUp.lineItemId)) {
+                    kitchenLineItem.setItemStatus(ItemStatus.FULFILLED);
+                    orderEventResult.addUpdate(new OrderUpdate(orderUp.orderId, orderUp.lineItemId, orderUp.name, orderUp.item, OrderStatus.FULFILLED, orderUp.madeBy));
+                }
+            });
+        }
+
+        // if there are both barista and kitchen items concatenate them before checking status
+        if (this.getBaristaLineItems().isPresent() && this.getKitchenLineItems().isPresent()) {
+            // check the status of the Order itself and update if necessary
+            if(Stream.concat(this.baristaLineItems.stream(), this.kitchenLineItems.stream())
+                    .allMatch(lineItem -> {
+                        return lineItem.getItemStatus().equals(ItemStatus.FULFILLED);
+                    })){
+                this.setOrderStatus(OrderStatus.FULFILLED);
+            };
+        }else if (this.getBaristaLineItems().isPresent()) {
+            if(this.baristaLineItems.stream()
+                    .allMatch(lineItem -> {
+                        return lineItem.getItemStatus().equals(ItemStatus.FULFILLED);
+                    })){
+                this.setOrderStatus(OrderStatus.FULFILLED);
+            };
+        }else if (this.getKitchenLineItems().isPresent()) {
+            if(this.kitchenLineItems.stream()
+                    .allMatch(lineItem -> {
+                        return lineItem.getItemStatus().equals(ItemStatus.FULFILLED);
+                    })){
+                this.setOrderStatus(OrderStatus.FULFILLED);
+            };
+        }
+
+        logger.debug("apply OrderUp event complete: {}", this);
+        orderEventResult.setOrder(this);
+
         return orderEventResult;
     }
 
@@ -175,6 +231,30 @@ public class Order extends PanacheEntityBase {
         return Optional.ofNullable(kitchenLineItems);
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("Order{");
+        sb.append("orderId='").append(orderId).append('\'');
+        sb.append(", orderSource=").append(orderSource);
+        sb.append(", loyaltyMemberId='").append(loyaltyMemberId).append('\'');
+        sb.append(", timestamp=").append(timestamp);
+        sb.append(", orderStatus=").append(orderStatus);
+        sb.append(", location=").append(location);
+        sb.append(", baristaLineItems=[");
+        if (getBaristaLineItems().isPresent()) {
+            sb.append(baristaLineItems.stream().map(Object::toString).collect(Collectors.joining(", ")));
+        }else{
+            sb.append("]");
+        }
+        sb.append(", kitchenLineItems=[");
+        if (getKitchenLineItems().isPresent()) {
+            sb.append(kitchenLineItems.stream().map(Object::toString).collect(Collectors.joining(", ")));
+        }else{
+            sb.append("]");
+        }
+        sb.append('}');
+        return sb.toString();
+    }
 
     // Generated
     @Override

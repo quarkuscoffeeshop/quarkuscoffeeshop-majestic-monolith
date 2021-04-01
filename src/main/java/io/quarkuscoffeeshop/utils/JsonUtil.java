@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
+import io.quarkuscoffeeshop.coffeeshop.domain.valueobjects.OrderUp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,6 +29,16 @@ public class JsonUtil {
     public static <T> T fromJson(final String json, Class clazz) {
         try {
             return (T) objectMapper.readValue(json, clazz);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            logger.error(e.getMessage());
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static OrderUp fromJsonToOrderUp(String json) {
+        try {
+            return objectMapper.readValue(json, OrderUp.class);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
             logger.error(e.getMessage());

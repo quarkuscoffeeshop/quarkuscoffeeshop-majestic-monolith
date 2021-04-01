@@ -18,8 +18,8 @@ import javax.inject.Inject;
 import java.time.Duration;
 import java.time.Instant;
 
-import static io.quarkuscoffeeshop.coffeeshop.eventbus.EventBusTopics.BARISTA_IN;
-import static io.quarkuscoffeeshop.coffeeshop.eventbus.EventBusTopics.ORDERS_UP;
+import static io.quarkuscoffeeshop.coffeeshop.infrastructure.EventBusTopics.BARISTA_IN;
+import static io.quarkuscoffeeshop.coffeeshop.infrastructure.EventBusTopics.ORDERS_UP;
 
 @Startup @ApplicationScoped
 public class BaristaImpl implements Barista {
@@ -36,7 +36,7 @@ public class BaristaImpl implements Barista {
         OrderIn orderIn = JsonUtil.fromJson(message.body().toString(), OrderIn.class);
         logger.debug("order in : {}", orderIn);
         makeReactively(orderIn).subscribe().with(result -> {
-            eventBus.send(ORDERS_UP, JsonUtil.toJson(result));
+            eventBus.<OrderUp>publish(ORDERS_UP, JsonUtil.toJson(result));
             logger.debug("sent order up: {}", result);
         });
 

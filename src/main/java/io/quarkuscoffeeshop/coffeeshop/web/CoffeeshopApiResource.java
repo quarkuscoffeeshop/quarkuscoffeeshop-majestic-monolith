@@ -3,6 +3,9 @@ package io.quarkuscoffeeshop.coffeeshop.web;
 
 import io.quarkuscoffeeshop.coffeeshop.counter.api.OrderService;
 import io.quarkuscoffeeshop.coffeeshop.domain.commands.PlaceOrderCommand;
+import io.smallrye.mutiny.Uni;
+import io.smallrye.mutiny.infrastructure.Infrastructure;
+import io.smallrye.reactive.messaging.annotations.Blocking;
 import io.vertx.mutiny.core.eventbus.EventBus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,11 +35,15 @@ public class CoffeeshopApiResource {
     @POST
     @Path("/order")
     @Transactional
-    public Response placeOrder(final PlaceOrderCommand placeOrderCommand) {
+    public Uni<Response> placeOrder(final PlaceOrderCommand placeOrderCommand) {
 
         logger.info("PlaceOrderCommand received: {}", placeOrderCommand);
-        orderService.onOrderIn(placeOrderCommand);
-        return Response.accepted().build();
+        return orderService.onOrderIn(placeOrderCommand)
+                .onItem()
+                .transform(order -> {
+                    return Response.accepted().build();
+                })
+                .runSubscriptionOn(Infrastructure.getDefaultWorkerPool());
     }
 
     @POST

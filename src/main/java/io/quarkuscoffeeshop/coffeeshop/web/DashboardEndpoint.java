@@ -1,6 +1,5 @@
 package io.quarkuscoffeeshop.coffeeshop.web;
 
-import io.quarkus.runtime.Startup;
 import io.smallrye.mutiny.Multi;
 import io.vertx.mutiny.core.eventbus.EventBus;
 import io.vertx.mutiny.core.eventbus.Message;
@@ -13,7 +12,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import static io.quarkuscoffeeshop.coffeeshop.eventbus.EventBusTopics.WEB_UPDATES;
+import static io.quarkuscoffeeshop.coffeeshop.infrastructure.EventBusTopics.WEB_UPDATES;
 
 @Path("/dashboard")
 public class DashboardEndpoint {

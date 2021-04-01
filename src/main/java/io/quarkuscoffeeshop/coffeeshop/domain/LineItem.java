@@ -6,6 +6,7 @@ import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @JsonIgnoreProperties(value = { "orderId" })
 @Entity
@@ -37,6 +38,7 @@ public class LineItem extends PanacheEntityBase {
         this.price = price;
         this.itemStatus = itemStatus;
         this.order = order;
+        this.itemId = UUID.randomUUID().toString();
     }
 
     public LineItem() {

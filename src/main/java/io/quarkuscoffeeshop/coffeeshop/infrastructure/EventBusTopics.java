@@ -1,4 +1,4 @@
-package io.quarkuscoffeeshop.coffeeshop.eventbus;
+package io.quarkuscoffeeshop.coffeeshop.infrastructure;
 
 public class EventBusTopics {
 

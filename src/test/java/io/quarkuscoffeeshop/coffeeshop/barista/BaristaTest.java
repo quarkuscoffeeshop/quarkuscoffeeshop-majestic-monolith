@@ -5,7 +5,13 @@ import io.quarkuscoffeeshop.coffeeshop.barista.api.Barista;
 import io.quarkuscoffeeshop.coffeeshop.domain.Item;
 import io.quarkuscoffeeshop.coffeeshop.domain.valueobjects.OrderIn;
 import io.quarkuscoffeeshop.coffeeshop.domain.valueobjects.OrderUp;
+<<<<<<< Updated upstream
 import io.smallrye.mutiny.Multi;
+=======
+import io.quarkuscoffeeshop.utils.JsonUtil;
+import io.vertx.mutiny.core.eventbus.EventBus;
+import org.junit.jupiter.api.BeforeEach;
+>>>>>>> Stashed changes
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +22,11 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Stream;
 
+<<<<<<< Updated upstream
 import static org.awaitility.Awaitility.await;
+=======
+import static io.quarkuscoffeeshop.coffeeshop.infrastructure.EventBusTopics.*;
+>>>>>>> Stashed changes
 import static org.junit.jupiter.api.Assertions.*;
 
 @QuarkusTest
