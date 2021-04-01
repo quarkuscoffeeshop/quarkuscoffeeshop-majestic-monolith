@@ -1,15 +1,14 @@
 package io.quarkuscoffeeshop.coffeeshop.counter;
 
-import io.quarkus.hibernate.orm.panache.Panache;
 import io.quarkus.vertx.ConsumeEvent;
 import io.quarkuscoffeeshop.coffeeshop.counter.api.OrderService;
 import io.quarkuscoffeeshop.coffeeshop.counter.domain.OrderEventResult;
 import io.quarkuscoffeeshop.coffeeshop.domain.Order;
-import io.quarkuscoffeeshop.coffeeshop.domain.OrderStatus;
 import io.quarkuscoffeeshop.coffeeshop.domain.commands.PlaceOrderCommand;
 import io.quarkuscoffeeshop.coffeeshop.domain.valueobjects.OrderUp;
 import io.quarkuscoffeeshop.coffeeshop.infrastructure.OrderRepository;
 import io.quarkuscoffeeshop.utils.JsonUtil;
+import io.smallrye.common.annotation.Blocking;
 import io.smallrye.mutiny.Uni;
 import io.smallrye.mutiny.infrastructure.Infrastructure;
 import io.vertx.core.eventbus.EventBus;
@@ -23,7 +22,8 @@ import javax.transaction.Transactional;
 import java.util.concurrent.CompletableFuture;
 
 import static io.quarkuscoffeeshop.coffeeshop.infrastructure.EventBusTopics.*;
-import static io.quarkuscoffeeshop.utils.JsonUtil.*;
+import static io.quarkuscoffeeshop.utils.JsonUtil.fromJsonToOrderUp;
+import static io.quarkuscoffeeshop.utils.JsonUtil.toJson;
 
 @ApplicationScoped
 public class OrderServiceImpl implements OrderService {
@@ -167,7 +167,7 @@ public class OrderServiceImpl implements OrderService {
                         eventBus.send(WEB_UPDATES, toJson(orderUpdate));
                         logger.debug("sent web update: {}", orderUpdate);
                     });
-                    orderEventResult.getOrder().setOrderStatus(OrderStatus.FULFILLED);
+//                    orderRepository.persistAndFlush(order);
                     logger.debug("persisted order: {}", orderEventResult.getOrder());
                     return orderEventResult;
                 });
