@@ -5,6 +5,7 @@ import io.quarkus.vertx.ConsumeEvent;
 import io.quarkuscoffeeshop.coffeeshop.counter.api.OrderService;
 import io.quarkuscoffeeshop.coffeeshop.counter.domain.OrderEventResult;
 import io.quarkuscoffeeshop.coffeeshop.domain.Order;
+import io.quarkuscoffeeshop.coffeeshop.domain.OrderStatus;
 import io.quarkuscoffeeshop.coffeeshop.domain.commands.PlaceOrderCommand;
 import io.quarkuscoffeeshop.coffeeshop.domain.valueobjects.OrderUp;
 import io.quarkuscoffeeshop.coffeeshop.infrastructure.OrderRepository;
@@ -45,13 +46,29 @@ public class OrderServiceImpl implements OrderService {
                 .map(orderEventResult -> {
                     logger.debug("OrderEventResult: {}", orderEventResult);
                     saveOrder(orderEventResult.getOrder());
+                    if (orderEventResult.getBaristaTickets().isPresent()) {
+                        orderEventResult.getBaristaTickets().get().forEach(baristaTicket -> {
+                            eventBus.send(BARISTA_IN, JsonUtil.toJson(baristaTicket));
+                            logger.debug("sent to barista: {}", baristaTicket);
+                        });
+                    }
+                    if (orderEventResult.getKitchenTickets().isPresent()) {
+                        orderEventResult.getKitchenTickets().get().forEach(kitchenTicket -> {
+                            eventBus.send(KITCHEN_IN, JsonUtil.toJson(kitchenTicket));
+                            logger.debug("sent to kitchen: {}", kitchenTicket);
+                        });
+                    }
+                    orderEventResult.getOrderUpdates().forEach(orderUpdate -> {
+                        eventBus.send(WEB_UPDATES, JsonUtil.toJson(orderUpdate));
+                        logger.debug("sent web update: {}", orderUpdate);
+                    });
                     logger.debug("order persiste", orderEventResult.getOrder());
                     return orderEventResult.getOrder();
                 });
     }
 
     private void saveOrder(final Order order) {
-        order.persist();
+        orderRepository.persistAndFlush(order);
     }
 
     private Uni<OrderEventResult> fromPlaceOrderCommand(final PlaceOrderCommand placeOrderCommand) {
@@ -93,13 +110,44 @@ public class OrderServiceImpl implements OrderService {
 
     }
 
+    private Order retrieveOrder(final String orderId) {
+        return orderRepository.findById(orderId);
+    }
     @Override
     @ConsumeEvent(ORDERS_UP)
+    @Transactional
     public void onOrderUp(final Message message) {
 
-        OrderUp orderUp = JsonUtil.fromJson(message.body().toString(), OrderUp.class);
-        logger.debug("order up : {}", orderUp);
-
+        logger.debug("order up message: {}", message.body());
+        applyOrderUp3(fromJsonToOrderUp(message.body().toString()))
+                .runSubscriptionOn(Infrastructure.getDefaultWorkerPool())
+                .subscribe()
+                .with(orderEventResult -> {
+                    logger.debug("completed onOrderUp");
+                });
+/*
+        Uni.createFrom().item(message.body().toString())
+                .map(body -> fromJsonToOrderUp(body))
+                .map(orderUp -> {
+                    Order order = retrieveOrder(orderUp.orderId);
+                    logger.debug("retrieved Order: {}", order);
+                    OrderEventResult orderEventResult = order.apply(orderUp);
+                    logger.debug("After applying OrderUp event Order: {}", orderEventResult.getOrder());
+                    orderEventResult.getOrderUpdates().forEach(orderUpdate -> {
+                        eventBus.send(WEB_UPDATES, toJson(orderUpdate));
+                        logger.debug("sent web update: {}", orderUpdate);
+                    });
+                    //orderRepository.persistAndFlush(order);
+                    saveOrder(order);
+                    return orderEventResult;
+                })
+                .onFailure().invoke(err -> logger.error(err.getMessage()))
+                .emitOn(Infrastructure.getDefaultExecutor())
+                .subscribe()
+                .with(orderEventResultCompletableFuture -> {
+                    logger.debug("completed order up");
+                });
+*/
 //        OrderEventResult orderEventResult = Order.apply(orderUp);
 
 //        orderEventResult.getOrderUpdates().forEach(orderUpdate -> {
@@ -107,6 +155,22 @@ public class OrderServiceImpl implements OrderService {
 //            logger.debug("sent web update: {}", orderUpdate);
 //        });
 
+    }
+
+    private Uni<OrderEventResult> applyOrderUp3(final OrderUp orderUp) {
+        return Uni.createFrom().item(orderUp)
+                .map(o -> {
+                    Order order = orderRepository.findById(o.orderId);
+                    OrderEventResult orderEventResult = order.apply(orderUp);
+                    logger.debug("After applying OrderUp event Order: {}", orderEventResult.getOrder());
+                    orderEventResult.getOrderUpdates().forEach(orderUpdate -> {
+                        eventBus.send(WEB_UPDATES, toJson(orderUpdate));
+                        logger.debug("sent web update: {}", orderUpdate);
+                    });
+                    orderEventResult.getOrder().setOrderStatus(OrderStatus.FULFILLED);
+                    logger.debug("persisted order: {}", orderEventResult.getOrder());
+                    return orderEventResult;
+                });
     }
 
 //    @Override @Transactional

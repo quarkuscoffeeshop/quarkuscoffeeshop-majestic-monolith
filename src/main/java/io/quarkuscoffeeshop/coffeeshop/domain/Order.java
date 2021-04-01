@@ -130,7 +130,7 @@ public class Order extends PanacheEntityBase {
 
         // loop through barista tickets and update this line item
         if (this.getBaristaLineItems().isPresent()) {
-            this.getBaristaLineItems().get().forEach(baristaLineItem -> {
+            this.getBaristaLineItems().get().stream().forEach(baristaLineItem -> {
                 if (baristaLineItem.getItemId().equals(orderUp.lineItemId)) {
                     baristaLineItem.setItemStatus(ItemStatus.FULFILLED);
                     orderEventResult.addUpdate(new OrderUpdate(orderUp.orderId, orderUp.lineItemId, orderUp.name, orderUp.item, OrderStatus.FULFILLED, orderUp.madeBy));
@@ -138,7 +138,7 @@ public class Order extends PanacheEntityBase {
             });
         }
         if (this.getKitchenLineItems().isPresent()) {
-            this.getKitchenLineItems().get().forEach(kitchenLineItem -> {
+            this.getKitchenLineItems().get().stream().forEach(kitchenLineItem -> {
                 if (kitchenLineItem.getItemId().equals(orderUp.lineItemId)) {
                     kitchenLineItem.setItemStatus(ItemStatus.FULFILLED);
                     orderEventResult.addUpdate(new OrderUpdate(orderUp.orderId, orderUp.lineItemId, orderUp.name, orderUp.item, OrderStatus.FULFILLED, orderUp.madeBy));
