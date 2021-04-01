@@ -5,28 +5,26 @@ import io.quarkuscoffeeshop.coffeeshop.barista.api.Barista;
 import io.quarkuscoffeeshop.coffeeshop.domain.Item;
 import io.quarkuscoffeeshop.coffeeshop.domain.valueobjects.OrderIn;
 import io.quarkuscoffeeshop.coffeeshop.domain.valueobjects.OrderUp;
-<<<<<<< Updated upstream
+import io.quarkuscoffeeshop.coffeeshop.domain.valueobjects.OrderUpdate;
 import io.smallrye.mutiny.Multi;
-=======
 import io.quarkuscoffeeshop.utils.JsonUtil;
 import io.vertx.mutiny.core.eventbus.EventBus;
 import org.junit.jupiter.api.BeforeEach;
->>>>>>> Stashed changes
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Stream;
 
-<<<<<<< Updated upstream
+import static io.quarkuscoffeeshop.utils.JsonUtil.fromJson;
+import static io.quarkuscoffeeshop.utils.JsonUtil.fromJsonToOrderUp;
 import static org.awaitility.Awaitility.await;
-=======
 import static io.quarkuscoffeeshop.coffeeshop.infrastructure.EventBusTopics.*;
->>>>>>> Stashed changes
 import static org.junit.jupiter.api.Assertions.*;
 
 @QuarkusTest
@@ -37,13 +35,35 @@ public class BaristaTest {
     @Inject
     Barista barista;
 
+    @Inject
+    EventBus eventBus;
+
+    List<OrderUp> orderUpMessages = new ArrayList<>();
+
+    @BeforeEach
+    public void setUp() {
+
+        eventBus.consumer(WEB_UPDATES)
+                .handler(message -> {
+                    logger.info("message received: {}", message.body().toString());
+                    assertNotNull(message);
+                    orderUpMessages.add(fromJsonToOrderUp(message.body().toString()));
+                });
+    }
+
     @Test
     public void testMakeBlackCoffee() {
         OrderIn orderIn = new OrderIn(UUID.randomUUID().toString(), UUID.randomUUID().toString(), Item.COFFEE_BLACK, "Spock");
-//        OrderUp orderUp = barista.onOrderIn(orderIn);
-        assertNotNull(orderUp);
-        assertNotNull(orderUp.madeBy);
-        assertEquals(orderIn.orderId, orderUp.orderId);
+
+        eventBus.publish(ORDERS_UP, JsonUtil.toJson(orderIn));
+
+        try {
+            Thread.sleep(7000);
+        } catch (InterruptedException e) {
+            assertNull(e);
+        }
+
+        assertEquals(1, orderUpMessages.size());
     }
 
 /*

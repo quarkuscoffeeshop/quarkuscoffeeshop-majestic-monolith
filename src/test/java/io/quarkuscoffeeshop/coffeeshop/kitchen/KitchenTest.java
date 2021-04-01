@@ -1,31 +1,66 @@
 package io.quarkuscoffeeshop.coffeeshop.kitchen;
 
 
+import io.quarkus.test.junit.QuarkusTest;
+import io.quarkus.test.junit.mockito.InjectMock;
+import io.quarkuscoffeeshop.coffeeshop.barista.BaristaTest;
+import io.quarkuscoffeeshop.coffeeshop.barista.api.Barista;
+import io.quarkuscoffeeshop.coffeeshop.counter.api.OrderService;
 import io.quarkuscoffeeshop.coffeeshop.domain.Item;
 import io.quarkuscoffeeshop.coffeeshop.domain.valueobjects.OrderUp;
 import io.quarkuscoffeeshop.coffeeshop.domain.valueobjects.OrderIn;
+import io.quarkuscoffeeshop.utils.JsonUtil;
+import io.vertx.mutiny.core.eventbus.EventBus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static io.quarkuscoffeeshop.coffeeshop.infrastructure.EventBusTopics.*;
+import static io.quarkuscoffeeshop.utils.JsonUtil.fromJsonToOrderUp;
+import static org.junit.jupiter.api.Assertions.*;
 
+@QuarkusTest
 public class KitchenTest {
 
-    Kitchen kitchen;
+    private static final Logger logger = LoggerFactory.getLogger(BaristaTest.class);
+
+    @Inject
+    EventBus eventBus;
+
+    @InjectMock
+    OrderService orderService;
+
+    List<OrderUp> orderUpMessages = new ArrayList<>();
 
     @BeforeEach
     public void setUp() {
-        kitchen = new KitchenImpl();
+
+        eventBus.consumer(KITCHEN_IN)
+                .handler(message -> {
+                    logger.info("message received: {}", message.body().toString());
+                    assertNotNull(message);
+                    orderUpMessages.add(fromJsonToOrderUp(message.body().toString()));
+                });
     }
 
     @Test
-    public void testMakeCroissant() {
+    public void testMakeBlackCoffee() {
+        OrderIn orderIn = new OrderIn(UUID.randomUUID().toString(), UUID.randomUUID().toString(), Item.CROISSANT, "Spock");
 
-        OrderIn orderIn = new OrderIn(UUID.randomUUID().toString(), UUID.randomUUID().toString(), Item.CROISSANT, "Uhuru");
-        OrderUp orderUp = kitchen.make(orderIn);
-        assertNotNull(orderUp);
-        assertNotNull(orderUp.orderId, orderIn.orderId);
+        eventBus.publish(KITCHEN_IN, JsonUtil.toJson(orderIn));
+
+        try {
+            Thread.sleep(8000);
+        } catch (InterruptedException e) {
+            assertNull(e);
+        }
+
+        assertEquals(1, orderUpMessages.size());
     }
 }
