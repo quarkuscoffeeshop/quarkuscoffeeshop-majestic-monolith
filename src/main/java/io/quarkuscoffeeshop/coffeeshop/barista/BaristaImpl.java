@@ -3,6 +3,7 @@ package io.quarkuscoffeeshop.coffeeshop.barista;
 import io.quarkus.runtime.Startup;
 import io.quarkus.vertx.ConsumeEvent;
 import io.quarkuscoffeeshop.coffeeshop.barista.api.Barista;
+import io.quarkuscoffeeshop.coffeeshop.barista.domain.BaristaItem;
 import io.quarkuscoffeeshop.coffeeshop.domain.Item;
 import io.quarkuscoffeeshop.coffeeshop.domain.valueobjects.OrderIn;
 import io.quarkuscoffeeshop.coffeeshop.domain.valueobjects.OrderUp;
@@ -16,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 import java.time.Duration;
 import java.time.Instant;
 
@@ -32,9 +34,12 @@ public class BaristaImpl implements Barista {
     @Inject
     EventBus eventBus;
 
-    @ConsumeEvent(BARISTA_IN) @Blocking
+    @ConsumeEvent(BARISTA_IN) @Blocking @Transactional
     public void onOrderIn(final Message message) {
         OrderIn orderIn = JsonUtil.fromJson(message.body().toString(), OrderIn.class);
+        BaristaItem baristaItem = new BaristaItem();
+        baristaItem.setItem(orderIn.item.toString());
+        baristaItem.setTimeIn(Instant.now());
         logger.debug("order in : {}", orderIn);
         try {
             Thread.sleep(calculateDelay(orderIn.item));
@@ -48,6 +53,8 @@ public class BaristaImpl implements Barista {
                 orderIn.name,
                 Instant.now(),
                 madeBy);
+        baristaItem.setTimeUp(Instant.now());
+        baristaItem.persist();
         eventBus.<OrderUp>publish(ORDERS_UP, JsonUtil.toJson(orderUp));
     }
 
