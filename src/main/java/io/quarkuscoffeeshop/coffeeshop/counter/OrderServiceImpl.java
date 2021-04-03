@@ -134,55 +134,19 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @ConsumeEvent(ORDERS_UP)
+    @Blocking
+    @Transactional
     public void onOrderUp(final Message message) {
 
         logger.debug("order up message: {}", message.body());
         OrderUp orderUp = fromJsonToOrderUp(message.body().toString());
-        OrderUpdate orderUpdate = new OrderUpdate(
-                orderUp.orderId,
-                orderUp.itemId,
-                orderUp.name,
-                orderUp.item,
-                OrderStatus.FULFILLED,
-                orderUp.madeBy
-        );
-        eventBus.publish(WEB_UPDATES, JsonUtil.toJson(orderUpdate));
 
-/*
-        applyOrderUp3(fromJsonToOrderUp(message.body().toString()))
-                .runSubscriptionOn(Infrastructure.getDefaultWorkerPool())
-                .subscribe()
-                .with(orderEventResult -> {
-                    logger.debug("completed onOrderUp");
-                });
-        Uni.createFrom().item(message.body().toString())
-                .map(body -> fromJsonToOrderUp(body))
-                .map(orderUp -> {
-                    Order order = retrieveOrder(orderUp.orderId);
-                    logger.debug("retrieved Order: {}", order);
-                    OrderEventResult orderEventResult = order.apply(orderUp);
-                    logger.debug("After applying OrderUp event Order: {}", orderEventResult.getOrder());
-                    orderEventResult.getOrderUpdates().forEach(orderUpdate -> {
-                        eventBus.send(WEB_UPDATES, toJson(orderUpdate));
-                        logger.debug("sent web update: {}", orderUpdate);
-                    });
-                    //orderRepository.persistAndFlush(order);
-                    saveOrder(order);
-                    return orderEventResult;
-                })
-                .onFailure().invoke(err -> logger.error(err.getMessage()))
-                .emitOn(Infrastructure.getDefaultExecutor())
-                .subscribe()
-                .with(orderEventResultCompletableFuture -> {
-                    logger.debug("completed order up");
-                });
-*/
-//        OrderEventResult orderEventResult = Order.apply(orderUp);
-
-//        orderEventResult.getOrderUpdates().forEach(orderUpdate -> {
-//            eventBus.send(WEB_UPDATES, JsonUtil.toJson(orderUpdate));
-//            logger.debug("sent web update: {}", orderUpdate);
-//        });
+        Order order = orderRepository.findById(orderUp.orderId);
+        OrderEventResult orderEventResult = order.apply(orderUp);
+        orderRepository.persistAndFlush(order);
+        orderEventResult.getOrderUpdates().forEach(orderUpdate -> {
+            eventBus.publish(WEB_UPDATES, JsonUtil.toJson(orderUpdate));
+        });
 
     }
 
