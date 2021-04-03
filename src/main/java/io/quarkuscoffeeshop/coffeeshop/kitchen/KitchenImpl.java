@@ -60,35 +60,18 @@ public class KitchenImpl implements Kitchen {
 
     }
 
-    public Uni<OrderUp> make(OrderIn orderIn) {
-        return Uni.createFrom().item(orderIn)
-                .onItem()
-                .transform(item -> {
-                    return new OrderUp(
-                            item.orderId,
-                            item.itemId,
-                            item.item,
-                            item.name,
-                            Instant.now(),
-                            madeBy);
-                })
-                .onItem()
-                .delayIt()
-                .by(Duration.ofSeconds(calculateDelay(orderIn.item)));
-    }
-
     private int calculateDelay(final Item item) {
         switch (item) {
             case CROISSANT:
-                return 7;
+                return 7000;
             case CROISSANT_CHOCOLATE:
-                return 7;
+                return 7000;
             case CAKEPOP:
-                return 5;
+                return 5000;
             case MUFFIN:
-                return 7;
+                return 7000;
             default:
-                return 3;
+                return 3000;
         }
     }
 }
