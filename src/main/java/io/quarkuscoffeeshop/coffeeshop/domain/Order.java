@@ -1,6 +1,5 @@
 package io.quarkuscoffeeshop.coffeeshop.domain;
 
-import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import io.quarkuscoffeeshop.coffeeshop.counter.domain.OrderEventResult;
 import io.quarkuscoffeeshop.coffeeshop.domain.commands.PlaceOrderCommand;
@@ -122,7 +121,7 @@ public class Order extends PanacheEntityBase {
 
         orderEventResult.addUpdate(new OrderUpdate(
                 orderUp.orderId,
-                orderUp.lineItemId,
+                orderUp.itemId,
                 orderUp.name,
                 orderUp.item,
                 OrderStatus.FULFILLED,
@@ -131,17 +130,17 @@ public class Order extends PanacheEntityBase {
         // loop through barista tickets and update this line item
         if (this.getBaristaLineItems().isPresent()) {
             this.getBaristaLineItems().get().stream().forEach(baristaLineItem -> {
-                if (baristaLineItem.getItemId().equals(orderUp.lineItemId)) {
+                if (baristaLineItem.getItemId().equals(orderUp.itemId)) {
                     baristaLineItem.setItemStatus(ItemStatus.FULFILLED);
-                    orderEventResult.addUpdate(new OrderUpdate(orderUp.orderId, orderUp.lineItemId, orderUp.name, orderUp.item, OrderStatus.FULFILLED, orderUp.madeBy));
+                    orderEventResult.addUpdate(new OrderUpdate(orderUp.orderId, orderUp.itemId, orderUp.name, orderUp.item, OrderStatus.FULFILLED, orderUp.madeBy));
                 }
             });
         }
         if (this.getKitchenLineItems().isPresent()) {
             this.getKitchenLineItems().get().stream().forEach(kitchenLineItem -> {
-                if (kitchenLineItem.getItemId().equals(orderUp.lineItemId)) {
+                if (kitchenLineItem.getItemId().equals(orderUp.itemId)) {
                     kitchenLineItem.setItemStatus(ItemStatus.FULFILLED);
-                    orderEventResult.addUpdate(new OrderUpdate(orderUp.orderId, orderUp.lineItemId, orderUp.name, orderUp.item, OrderStatus.FULFILLED, orderUp.madeBy));
+                    orderEventResult.addUpdate(new OrderUpdate(orderUp.orderId, orderUp.itemId, orderUp.name, orderUp.item, OrderStatus.FULFILLED, orderUp.madeBy));
                 }
             });
         }

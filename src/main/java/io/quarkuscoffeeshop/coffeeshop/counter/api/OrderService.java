@@ -11,7 +11,7 @@ import io.vertx.mutiny.core.eventbus.Message;
  */
 public interface OrderService {
 
-    public Uni<Order> onOrderIn(final PlaceOrderCommand placeOrderCommand);
+    public void onOrderIn(final PlaceOrderCommand placeOrderCommand);
 
     public void onOrderUp(final Message message);
 }

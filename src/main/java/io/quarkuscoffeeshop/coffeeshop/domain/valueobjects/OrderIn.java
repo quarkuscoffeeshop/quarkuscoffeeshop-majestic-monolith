@@ -13,7 +13,7 @@ public class OrderIn {
 
     public final String orderId;
 
-    public final String lineItemId;
+    public final String itemId;
 
     public final Item item;
 
@@ -24,11 +24,11 @@ public class OrderIn {
     @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
     public OrderIn(
             @JsonProperty("orderId") String orderId,
-            @JsonProperty("lineItemId") String lineItemId,
+            @JsonProperty("lineItemId") String itemId,
             @JsonProperty("item") Item item,
             @JsonProperty("name") String name) {
         this.orderId = orderId;
-        this.lineItemId = lineItemId;
+        this.itemId = itemId;
         this.item = item;
         this.name = name;
         this.timestamp = Instant.now();
@@ -38,7 +38,7 @@ public class OrderIn {
     public String toString() {
         return "OrderTicket{" +
                 "orderId='" + orderId + '\'' +
-                ", lineItemId='" + lineItemId + '\'' +
+                ", lineItemId='" + itemId + '\'' +
                 ", item=" + item +
                 ", name='" + name + '\'' +
                 ", timestamp=" + timestamp +
@@ -53,7 +53,7 @@ public class OrderIn {
         OrderIn that = (OrderIn) o;
 
         if (orderId != null ? !orderId.equals(that.orderId) : that.orderId != null) return false;
-        if (lineItemId != null ? !lineItemId.equals(that.lineItemId) : that.lineItemId != null) return false;
+        if (itemId != null ? !itemId.equals(that.itemId) : that.itemId != null) return false;
         if (item != that.item) return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
         return timestamp != null ? timestamp.equals(that.timestamp) : that.timestamp == null;
@@ -62,7 +62,7 @@ public class OrderIn {
     @Override
     public int hashCode() {
         int result = orderId != null ? orderId.hashCode() : 0;
-        result = 31 * result + (lineItemId != null ? lineItemId.hashCode() : 0);
+        result = 31 * result + (itemId != null ? itemId.hashCode() : 0);
         result = 31 * result + (item != null ? item.hashCode() : 0);
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (timestamp != null ? timestamp.hashCode() : 0);

@@ -52,7 +52,7 @@ public class OrderServiceOrderUpTest {
         OrderIn orderIn = orderEventResult.getBaristaTickets().get().get(0);
         OrderUp orderUp = new OrderUp(
                 orderId,
-                orderIn.lineItemId,
+                orderIn.itemId,
                 orderIn.item,
                 orderIn.name,
                 Instant.now(),

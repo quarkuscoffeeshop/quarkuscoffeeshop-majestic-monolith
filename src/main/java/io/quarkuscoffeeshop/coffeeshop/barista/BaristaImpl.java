@@ -7,6 +7,7 @@ import io.quarkuscoffeeshop.coffeeshop.domain.Item;
 import io.quarkuscoffeeshop.coffeeshop.domain.valueobjects.OrderIn;
 import io.quarkuscoffeeshop.coffeeshop.domain.valueobjects.OrderUp;
 import io.quarkuscoffeeshop.utils.JsonUtil;
+import io.smallrye.common.annotation.Blocking;
 import io.smallrye.mutiny.Uni;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.mutiny.core.eventbus.Message;
@@ -31,15 +32,23 @@ public class BaristaImpl implements Barista {
     @Inject
     EventBus eventBus;
 
-    @ConsumeEvent(BARISTA_IN)
+    @ConsumeEvent(BARISTA_IN) @Blocking
     public void onOrderIn(final Message message) {
         OrderIn orderIn = JsonUtil.fromJson(message.body().toString(), OrderIn.class);
         logger.debug("order in : {}", orderIn);
-        makeReactively(orderIn).subscribe().with(result -> {
-            eventBus.<OrderUp>publish(ORDERS_UP, JsonUtil.toJson(result));
-            logger.debug("sent order up: {}", result);
-        });
-
+        try {
+            Thread.sleep(calculateDelay(orderIn.item));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        OrderUp orderUp = new OrderUp(
+                orderIn.orderId,
+                orderIn.itemId,
+                orderIn.item,
+                orderIn.name,
+                Instant.now(),
+                madeBy);
+        eventBus.<OrderUp>publish(ORDERS_UP, JsonUtil.toJson(orderUp));
     }
 
     public Uni<OrderUp> makeReactively(OrderIn orderIn) {
@@ -48,7 +57,7 @@ public class BaristaImpl implements Barista {
                 .transform(item -> {
                     return new OrderUp(
                             item.orderId,
-                            item.lineItemId,
+                            item.itemId,
                             item.item,
                             item.name,
                             Instant.now(),
@@ -62,17 +71,17 @@ public class BaristaImpl implements Barista {
     private int calculateDelay(final Item item) {
         switch (item) {
             case COFFEE_BLACK:
-                return 5;
+                return 5000;
             case COFFEE_WITH_ROOM:
-                return 5;
+                return 5000;
             case ESPRESSO:
-                return 7;
+                return 7000;
             case ESPRESSO_DOUBLE:
-                return 7;
+                return 7000;
             case CAPPUCCINO:
-                return 10;
+                return 10000;
             default:
-                return 3;
+                return 3000;
         }
     }
 

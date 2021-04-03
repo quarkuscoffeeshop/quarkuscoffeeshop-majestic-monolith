@@ -45,7 +45,7 @@ public class KitchenImpl implements Kitchen {
                 .transform(item -> {
                     return new OrderUp(
                             item.orderId,
-                            item.lineItemId,
+                            item.itemId,
                             item.item,
                             item.name,
                             Instant.now(),

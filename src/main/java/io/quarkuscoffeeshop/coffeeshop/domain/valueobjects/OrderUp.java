@@ -29,7 +29,7 @@ public class OrderUp extends OrderIn{
     public String toString() {
         return "OrderUp{" +
                 "orderId='" + orderId + '\'' +
-                ", lineItemId='" + lineItemId + '\'' +
+                ", lineItemId='" + itemId + '\'' +
                 ", item=" + item +
                 ", name='" + name + '\'' +
                 ", timestamp=" + timestamp +

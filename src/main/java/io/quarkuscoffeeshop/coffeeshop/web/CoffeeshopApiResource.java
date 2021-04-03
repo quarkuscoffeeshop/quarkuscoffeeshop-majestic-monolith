@@ -35,15 +35,11 @@ public class CoffeeshopApiResource {
     @POST
     @Path("/order")
     @Transactional
-    public Uni<Response> placeOrder(final PlaceOrderCommand placeOrderCommand) {
+    public Response placeOrder(final PlaceOrderCommand placeOrderCommand) {
 
         logger.info("PlaceOrderCommand received: {}", placeOrderCommand);
-        return orderService.onOrderIn(placeOrderCommand)
-                .onItem()
-                .transform(order -> {
-                    return Response.accepted().build();
-                })
-                .runSubscriptionOn(Infrastructure.getDefaultWorkerPool());
+        orderService.onOrderIn(placeOrderCommand);
+        return Response.accepted().build();
     }
 
     @POST

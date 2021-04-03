@@ -3,7 +3,6 @@ package io.quarkuscoffeeshop.coffeeshop.counter;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkuscoffeeshop.coffeeshop.utils.TestUtils;
 import io.quarkuscoffeeshop.coffeeshop.counter.api.OrderService;
-import io.quarkuscoffeeshop.coffeeshop.counter.api.OrderService;
 import io.quarkuscoffeeshop.coffeeshop.counter.domain.OrderEventResult;
 import io.quarkuscoffeeshop.coffeeshop.domain.ItemStatus;
 import io.quarkuscoffeeshop.coffeeshop.domain.Order;
@@ -12,7 +11,6 @@ import io.quarkuscoffeeshop.coffeeshop.domain.commands.PlaceOrderCommand;
 import io.quarkuscoffeeshop.coffeeshop.domain.valueobjects.OrderIn;
 import io.quarkuscoffeeshop.coffeeshop.domain.valueobjects.OrderUp;
 import io.quarkuscoffeeshop.coffeeshop.domain.valueobjects.OrderUpdate;
-import io.quarkuscoffeeshop.coffeeshop.utils.TestUtils;
 import io.quarkuscoffeeshop.utils.JsonUtil;
 import io.vertx.mutiny.core.eventbus.EventBus;
 import org.junit.jupiter.api.BeforeEach;
@@ -93,7 +91,7 @@ public class OrderServiceTest {
         OrderIn orderIn = orderEventResult.getBaristaTickets().get().get(0);
         OrderUp orderUp = new OrderUp(
                 orderIn.orderId,
-                orderIn.lineItemId,
+                orderIn.itemId,
                 orderIn.item,
                 orderIn.name,
                 Instant.now(),

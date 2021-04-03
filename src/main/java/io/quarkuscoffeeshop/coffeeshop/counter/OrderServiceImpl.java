@@ -4,8 +4,10 @@ import io.quarkus.vertx.ConsumeEvent;
 import io.quarkuscoffeeshop.coffeeshop.counter.api.OrderService;
 import io.quarkuscoffeeshop.coffeeshop.counter.domain.OrderEventResult;
 import io.quarkuscoffeeshop.coffeeshop.domain.Order;
+import io.quarkuscoffeeshop.coffeeshop.domain.OrderStatus;
 import io.quarkuscoffeeshop.coffeeshop.domain.commands.PlaceOrderCommand;
 import io.quarkuscoffeeshop.coffeeshop.domain.valueobjects.OrderUp;
+import io.quarkuscoffeeshop.coffeeshop.domain.valueobjects.OrderUpdate;
 import io.quarkuscoffeeshop.coffeeshop.infrastructure.OrderRepository;
 import io.quarkuscoffeeshop.utils.JsonUtil;
 import io.smallrye.common.annotation.Blocking;
@@ -36,8 +38,24 @@ public class OrderServiceImpl implements OrderService {
     @Inject
     OrderRepository orderRepository;
 
-    @Override @Transactional
-    public Uni<Order> onOrderIn(final PlaceOrderCommand placeOrderCommand) {
+    @Transactional
+    public void onOrderIn(final PlaceOrderCommand placeOrderCommand) {
+        logger.debug("PlaceOrderCommand received: {}", placeOrderCommand);
+        OrderEventResult orderEventResult = Order.from(placeOrderCommand);
+        orderRepository.persist(orderEventResult.getOrder());
+        orderEventResult.getOrderUpdates().forEach(orderUpdate -> {
+            eventBus.publish(WEB_UPDATES, JsonUtil.toJson(orderUpdate));
+            logger.debug("sent web update: {}", orderUpdate);
+        });
+        if (orderEventResult.getBaristaTickets().isPresent()) {
+            orderEventResult.getBaristaTickets().get().forEach(baristaTicket -> {
+                eventBus.send(BARISTA_IN, JsonUtil.toJson(baristaTicket));
+                logger.debug("sent to barista: {}", baristaTicket);
+            });
+        }
+    }
+
+    public Uni<Order> onOrderInOriginal(final PlaceOrderCommand placeOrderCommand) {
         logger.debug("PlaceOrderCommand received: {}", placeOrderCommand);
         return Uni.createFrom().item(placeOrderCommand)
                 .map(command -> {
@@ -113,19 +131,30 @@ public class OrderServiceImpl implements OrderService {
     private Order retrieveOrder(final String orderId) {
         return orderRepository.findById(orderId);
     }
+
     @Override
     @ConsumeEvent(ORDERS_UP)
-    @Transactional
     public void onOrderUp(final Message message) {
 
         logger.debug("order up message: {}", message.body());
+        OrderUp orderUp = fromJsonToOrderUp(message.body().toString());
+        OrderUpdate orderUpdate = new OrderUpdate(
+                orderUp.orderId,
+                orderUp.itemId,
+                orderUp.name,
+                orderUp.item,
+                OrderStatus.FULFILLED,
+                orderUp.madeBy
+        );
+        eventBus.publish(WEB_UPDATES, JsonUtil.toJson(orderUpdate));
+
+/*
         applyOrderUp3(fromJsonToOrderUp(message.body().toString()))
                 .runSubscriptionOn(Infrastructure.getDefaultWorkerPool())
                 .subscribe()
                 .with(orderEventResult -> {
                     logger.debug("completed onOrderUp");
                 });
-/*
         Uni.createFrom().item(message.body().toString())
                 .map(body -> fromJsonToOrderUp(body))
                 .map(orderUp -> {
