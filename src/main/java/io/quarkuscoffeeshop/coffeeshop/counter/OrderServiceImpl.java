@@ -53,6 +53,12 @@ public class OrderServiceImpl implements OrderService {
                 logger.debug("sent to barista: {}", baristaTicket);
             });
         }
+        if (orderEventResult.getKitchenTickets().isPresent()) {
+            orderEventResult.getKitchenTickets().get().forEach(kitchenTicket -> {
+                eventBus.send(KITCHEN_IN, JsonUtil.toJson(kitchenTicket));
+                logger.debug("sent to kitchen: {}", kitchenTicket);
+            });
+        }
     }
 
     public Uni<Order> onOrderInOriginal(final PlaceOrderCommand placeOrderCommand) {

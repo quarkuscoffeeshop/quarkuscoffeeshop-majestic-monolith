@@ -4,7 +4,10 @@ import io.quarkus.vertx.ConsumeEvent;
 import io.quarkuscoffeeshop.coffeeshop.domain.Item;
 import io.quarkuscoffeeshop.coffeeshop.domain.valueobjects.OrderIn;
 import io.quarkuscoffeeshop.coffeeshop.domain.valueobjects.OrderUp;
+import io.quarkuscoffeeshop.coffeeshop.kitchen.domain.KitchenOrder;
+import io.quarkuscoffeeshop.coffeeshop.kitchen.domain.KitchenOrderRepository;
 import io.quarkuscoffeeshop.utils.JsonUtil;
+import io.smallrye.common.annotation.Blocking;
 import io.smallrye.mutiny.Uni;
 import io.vertx.mutiny.core.eventbus.EventBus;
 import io.vertx.mutiny.core.eventbus.Message;
@@ -13,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 import java.time.Duration;
 import java.time.Instant;
 
@@ -28,14 +32,31 @@ public class KitchenImpl implements Kitchen {
     @Inject
     EventBus eventBus;
 
+    @Inject
+    KitchenOrderRepository kitchenOrderRepository;
+
     @ConsumeEvent(KITCHEN_IN)
+    @Blocking
+    @Transactional
     public void onOrderIn(final Message message) {
         OrderIn orderIn = JsonUtil.fromJson(message.body().toString(), OrderIn.class);
+        KitchenOrder kitchenOrder = new KitchenOrder(orderIn.orderId, orderIn.item, Instant.now());
         logger.debug("order in : {}", orderIn);
-        make(orderIn).subscribe().with(result -> {
-            eventBus.<OrderUp>publish(ORDERS_UP, JsonUtil.toJson(result));
-            logger.debug("sent order up: {}", result);
-        });
+        try {
+            Thread.sleep(calculateDelay(orderIn.item));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        OrderUp orderUp = new OrderUp(
+                orderIn.orderId,
+                orderIn.itemId,
+                orderIn.item,
+                orderIn.name,
+                Instant.now(),
+                madeBy);
+        kitchenOrder.setTimeUp(Instant.now());
+        kitchenOrderRepository.persist(kitchenOrder);
+        eventBus.<OrderUp>publish(ORDERS_UP, JsonUtil.toJson(orderUp));
 
     }
 

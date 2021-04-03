@@ -1,2 +1,4 @@
 DROP SCHEMA IF EXISTS coffeeshop CASCADE ;
 CREATE SCHEMA coffeeshop AUTHORIZATION coffeeshopuser;
+DROP SCHEMA IF EXISTS kitchen CASCADE ;
+CREATE SCHEMA kitchen AUTHORIZATION coffeeshopuser;

@@ -41,7 +41,7 @@ public class KitchenTest {
     @BeforeEach
     public void setUp() {
 
-        eventBus.consumer(KITCHEN_IN)
+        eventBus.consumer(ORDERS_UP)
                 .handler(message -> {
                     logger.info("message received: {}", message.body().toString());
                     assertNotNull(message);
@@ -50,7 +50,7 @@ public class KitchenTest {
     }
 
     @Test
-    public void testMakeBlackCoffee() {
+    public void testSingleCroissant() {
         OrderIn orderIn = new OrderIn(UUID.randomUUID().toString(), UUID.randomUUID().toString(), Item.CROISSANT, "Spock");
 
         eventBus.publish(KITCHEN_IN, JsonUtil.toJson(orderIn));

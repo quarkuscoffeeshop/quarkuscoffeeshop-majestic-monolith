@@ -8,7 +8,6 @@ import java.time.Instant;
 @Entity
 public class BaristaItem extends PanacheEntity {
 
-
     private String item;
 
     private Instant timeIn;
