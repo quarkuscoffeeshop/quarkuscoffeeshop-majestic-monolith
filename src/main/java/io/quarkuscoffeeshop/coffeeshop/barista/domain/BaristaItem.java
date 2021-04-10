@@ -3,9 +3,10 @@ package io.quarkuscoffeeshop.coffeeshop.barista.domain;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 
 import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.time.Instant;
 
-@Entity
+@Entity @Table(name = "barista_order", schema = "barista")
 public class BaristaItem extends PanacheEntity {
 
     private String item;
