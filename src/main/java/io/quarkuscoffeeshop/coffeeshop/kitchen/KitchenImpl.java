@@ -8,7 +8,6 @@ import io.quarkuscoffeeshop.coffeeshop.kitchen.domain.KitchenOrder;
 import io.quarkuscoffeeshop.coffeeshop.kitchen.domain.KitchenOrderRepository;
 import io.quarkuscoffeeshop.utils.JsonUtil;
 import io.smallrye.common.annotation.Blocking;
-import io.smallrye.mutiny.Uni;
 import io.vertx.mutiny.core.eventbus.EventBus;
 import io.vertx.mutiny.core.eventbus.Message;
 import org.slf4j.Logger;
@@ -17,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
-import java.time.Duration;
 import java.time.Instant;
 
 import static io.quarkuscoffeeshop.coffeeshop.infrastructure.EventBusTopics.*;
@@ -25,7 +23,7 @@ import static io.quarkuscoffeeshop.coffeeshop.infrastructure.EventBusTopics.*;
 @ApplicationScoped
 public class KitchenImpl implements Kitchen {
 
-    private static final Logger logger = LoggerFactory.getLogger(KitchenImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(KitchenImpl.class);
 
     String madeBy = "Sulu";
 
@@ -41,7 +39,7 @@ public class KitchenImpl implements Kitchen {
     public void onOrderIn(final Message message) {
         OrderIn orderIn = JsonUtil.fromJson(message.body().toString(), OrderIn.class);
         KitchenOrder kitchenOrder = new KitchenOrder(orderIn.orderId, orderIn.item, Instant.now());
-        logger.debug("order in : {}", orderIn);
+        LOGGER.debug("order in : {}", orderIn);
         try {
             Thread.sleep(calculateDelay(orderIn.item));
         } catch (InterruptedException e) {

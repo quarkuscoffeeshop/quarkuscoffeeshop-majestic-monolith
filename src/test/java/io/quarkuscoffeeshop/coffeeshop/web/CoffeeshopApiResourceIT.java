@@ -19,7 +19,7 @@ import static org.mockito.ArgumentMatchers.any;
 @QuarkusTest
 public class CoffeeshopApiResourceIT {
 
-    private static final Logger logger = LoggerFactory.getLogger(CoffeeshopApiResourceIT.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CoffeeshopApiResourceIT.class);
 
     @InjectSpy
     OrderService orderService;
@@ -46,8 +46,8 @@ public class CoffeeshopApiResourceIT {
 
         PlaceOrderCommand placeOrderCommand = TestUtils.mockPlaceOrderCommand();
 
-        logger.info("placeOrderCommand: {}", placeOrderCommand);
-        logger.info("Testing place order");
+        LOGGER.info("placeOrderCommand: {}", placeOrderCommand);
+        LOGGER.info("Testing place order");
         System.out.println(JsonUtil.toJson(placeOrderCommand));
 
         given()

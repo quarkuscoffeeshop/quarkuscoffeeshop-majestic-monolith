@@ -26,7 +26,7 @@ import static io.quarkuscoffeeshop.coffeeshop.infrastructure.EventBusTopics.ORDE
 @Startup @ApplicationScoped
 public class BaristaImpl implements Barista {
 
-    private static final Logger logger = LoggerFactory.getLogger(BaristaImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(BaristaImpl.class);
 
     private final String madeBy = "Bones";
 
@@ -42,7 +42,7 @@ public class BaristaImpl implements Barista {
         BaristaItem baristaItem = new BaristaItem();
         baristaItem.setItem(orderIn.item.toString());
         baristaItem.setTimeIn(Instant.now());
-        logger.debug("order in : {}", orderIn);
+        LOGGER.debug("order in : {}", orderIn);
         try {
             Thread.sleep(calculateDelay(orderIn.item));
         } catch (InterruptedException e) {

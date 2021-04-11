@@ -4,15 +4,12 @@ import io.quarkus.vertx.ConsumeEvent;
 import io.quarkuscoffeeshop.coffeeshop.counter.api.OrderService;
 import io.quarkuscoffeeshop.coffeeshop.counter.domain.OrderEventResult;
 import io.quarkuscoffeeshop.coffeeshop.domain.Order;
-import io.quarkuscoffeeshop.coffeeshop.domain.OrderStatus;
 import io.quarkuscoffeeshop.coffeeshop.domain.commands.PlaceOrderCommand;
 import io.quarkuscoffeeshop.coffeeshop.domain.valueobjects.OrderUp;
-import io.quarkuscoffeeshop.coffeeshop.domain.valueobjects.OrderUpdate;
 import io.quarkuscoffeeshop.coffeeshop.infrastructure.OrderRepository;
 import io.quarkuscoffeeshop.utils.JsonUtil;
 import io.smallrye.common.annotation.Blocking;
 import io.smallrye.mutiny.Uni;
-import io.smallrye.mutiny.infrastructure.Infrastructure;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.mutiny.core.eventbus.Message;
 import org.slf4j.Logger;
@@ -30,7 +27,7 @@ import static io.quarkuscoffeeshop.utils.JsonUtil.toJson;
 @ApplicationScoped
 public class OrderServiceImpl implements OrderService {
 
-    Logger logger = LoggerFactory.getLogger(OrderServiceImpl.class);
+    Logger LOGGER = LoggerFactory.getLogger(OrderServiceImpl.class);
 
     @Inject
     EventBus eventBus;
@@ -40,53 +37,53 @@ public class OrderServiceImpl implements OrderService {
 
     @Transactional
     public void onOrderIn(final PlaceOrderCommand placeOrderCommand) {
-        logger.debug("PlaceOrderCommand received: {}", placeOrderCommand);
+        LOGGER.debug("PlaceOrderCommand received: {}", placeOrderCommand);
         OrderEventResult orderEventResult = Order.from(placeOrderCommand);
         orderRepository.persist(orderEventResult.getOrder());
         orderEventResult.getOrderUpdates().forEach(orderUpdate -> {
             eventBus.publish(WEB_UPDATES, JsonUtil.toJson(orderUpdate));
-            logger.debug("sent web update: {}", orderUpdate);
+            LOGGER.debug("sent web update: {}", orderUpdate);
         });
         if (orderEventResult.getBaristaTickets().isPresent()) {
             orderEventResult.getBaristaTickets().get().forEach(baristaTicket -> {
                 eventBus.send(BARISTA_IN, JsonUtil.toJson(baristaTicket));
-                logger.debug("sent to barista: {}", baristaTicket);
+                LOGGER.debug("sent to barista: {}", baristaTicket);
             });
         }
         if (orderEventResult.getKitchenTickets().isPresent()) {
             orderEventResult.getKitchenTickets().get().forEach(kitchenTicket -> {
                 eventBus.send(KITCHEN_IN, JsonUtil.toJson(kitchenTicket));
-                logger.debug("sent to kitchen: {}", kitchenTicket);
+                LOGGER.debug("sent to kitchen: {}", kitchenTicket);
             });
         }
     }
 
     public Uni<Order> onOrderInOriginal(final PlaceOrderCommand placeOrderCommand) {
-        logger.debug("PlaceOrderCommand received: {}", placeOrderCommand);
+        LOGGER.debug("PlaceOrderCommand received: {}", placeOrderCommand);
         return Uni.createFrom().item(placeOrderCommand)
                 .map(command -> {
                     return Order.from(placeOrderCommand);
                 })
                 .map(orderEventResult -> {
-                    logger.debug("OrderEventResult: {}", orderEventResult);
+                    LOGGER.debug("OrderEventResult: {}", orderEventResult);
                     saveOrder(orderEventResult.getOrder());
                     if (orderEventResult.getBaristaTickets().isPresent()) {
                         orderEventResult.getBaristaTickets().get().forEach(baristaTicket -> {
                             eventBus.send(BARISTA_IN, JsonUtil.toJson(baristaTicket));
-                            logger.debug("sent to barista: {}", baristaTicket);
+                            LOGGER.debug("sent to barista: {}", baristaTicket);
                         });
                     }
                     if (orderEventResult.getKitchenTickets().isPresent()) {
                         orderEventResult.getKitchenTickets().get().forEach(kitchenTicket -> {
                             eventBus.send(KITCHEN_IN, JsonUtil.toJson(kitchenTicket));
-                            logger.debug("sent to kitchen: {}", kitchenTicket);
+                            LOGGER.debug("sent to kitchen: {}", kitchenTicket);
                         });
                     }
                     orderEventResult.getOrderUpdates().forEach(orderUpdate -> {
                         eventBus.send(WEB_UPDATES, JsonUtil.toJson(orderUpdate));
-                        logger.debug("sent web update: {}", orderUpdate);
+                        LOGGER.debug("sent web update: {}", orderUpdate);
                     });
-                    logger.debug("order persiste", orderEventResult.getOrder());
+                    LOGGER.debug("order persiste", orderEventResult.getOrder());
                     return orderEventResult.getOrder();
                 });
     }
@@ -106,29 +103,29 @@ public class OrderServiceImpl implements OrderService {
      * Dispatch appropriate events
      */
     public void onOrderIn2(final PlaceOrderCommand placeOrderCommand) {
-        logger.debug("PlaceOrderCommand received: {}", placeOrderCommand);
+        LOGGER.debug("PlaceOrderCommand received: {}", placeOrderCommand);
 
         OrderEventResult orderEventResult = Order.from(placeOrderCommand);
-        logger.debug("OrderEventResult returned: {}", orderEventResult);
+        LOGGER.debug("OrderEventResult returned: {}", orderEventResult);
 
-        logger.debug("sending {} web updates to notifiy the dashboard that the order is in progress", orderEventResult.getOrderUpdates().size());
+        LOGGER.debug("sending {} web updates to notifiy the dashboard that the order is in progress", orderEventResult.getOrderUpdates().size());
 
         orderEventResult.getOrderUpdates().forEach(orderUpdate -> {
             eventBus.send(WEB_UPDATES, JsonUtil.toJson(orderUpdate));
-            logger.debug("sent web update: {}", orderUpdate);
+            LOGGER.debug("sent web update: {}", orderUpdate);
         });
 
         if (orderEventResult.getBaristaTickets().isPresent()) {
             orderEventResult.getBaristaTickets().get().forEach(baristaTicket -> {
                 eventBus.send(BARISTA_IN, JsonUtil.toJson(baristaTicket));
-                logger.debug("sent to barista: {}", baristaTicket);
+                LOGGER.debug("sent to barista: {}", baristaTicket);
             });
         }
 
         if (orderEventResult.getKitchenTickets().isPresent()) {
             orderEventResult.getKitchenTickets().get().forEach(kitchenTicket -> {
                 eventBus.send(KITCHEN_IN, JsonUtil.toJson(kitchenTicket));
-                logger.debug("sent to kitchen: {}", kitchenTicket);
+                LOGGER.debug("sent to kitchen: {}", kitchenTicket);
             });
         }
 
@@ -144,7 +141,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public void onOrderUp(final Message message) {
 
-        logger.debug("order up message: {}", message.body());
+        LOGGER.debug("order up message: {}", message.body());
         OrderUp orderUp = fromJsonToOrderUp(message.body().toString());
 
         Order order = orderRepository.findById(orderUp.orderId);
@@ -161,13 +158,13 @@ public class OrderServiceImpl implements OrderService {
                 .map(o -> {
                     Order order = orderRepository.findById(o.orderId);
                     OrderEventResult orderEventResult = order.apply(orderUp);
-                    logger.debug("After applying OrderUp event Order: {}", orderEventResult.getOrder());
+                    LOGGER.debug("After applying OrderUp event Order: {}", orderEventResult.getOrder());
                     orderEventResult.getOrderUpdates().forEach(orderUpdate -> {
                         eventBus.send(WEB_UPDATES, toJson(orderUpdate));
-                        logger.debug("sent web update: {}", orderUpdate);
+                        LOGGER.debug("sent web update: {}", orderUpdate);
                     });
 //                    orderRepository.persistAndFlush(order);
-                    logger.debug("persisted order: {}", orderEventResult.getOrder());
+                    LOGGER.debug("persisted order: {}", orderEventResult.getOrder());
                     return orderEventResult;
                 });
     }
@@ -343,13 +340,13 @@ public class OrderServiceImpl implements OrderService {
         return CompletableFuture.supplyAsync(() -> {
             Order order = orderRepository.findById(orderUp.orderId);
             OrderEventResult orderEventResult = order.apply(orderUp);
-            logger.debug("After applying OrderUp event Order: {}", orderEventResult.getOrder());
+            LOGGER.debug("After applying OrderUp event Order: {}", orderEventResult.getOrder());
             orderEventResult.getOrderUpdates().forEach(orderUpdate -> {
                 eventBus.send(WEB_UPDATES, toJson(orderUpdate));
-                logger.debug("sent web update: {}", orderUpdate);
+                LOGGER.debug("sent web update: {}", orderUpdate);
             });
             orderRepository.persist(orderEventResult.getOrder());
-            logger.debug("persisted order: {}", orderEventResult.getOrder());
+            LOGGER.debug("persisted order: {}", orderEventResult.getOrder());
             return orderEventResult;
         });
     }

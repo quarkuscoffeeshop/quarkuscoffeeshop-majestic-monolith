@@ -3,8 +3,6 @@ package io.quarkuscoffeeshop.coffeeshop.kitchen;
 
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.mockito.InjectMock;
-import io.quarkuscoffeeshop.coffeeshop.barista.BaristaTest;
-import io.quarkuscoffeeshop.coffeeshop.barista.api.Barista;
 import io.quarkuscoffeeshop.coffeeshop.counter.api.OrderService;
 import io.quarkuscoffeeshop.coffeeshop.domain.Item;
 import io.quarkuscoffeeshop.coffeeshop.domain.valueobjects.OrderUp;
@@ -28,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @QuarkusTest
 public class KitchenTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(KitchenTest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(KitchenTest.class);
 
     @Inject
     EventBus eventBus;
@@ -43,7 +41,7 @@ public class KitchenTest {
 
         eventBus.consumer(ORDERS_UP)
                 .handler(message -> {
-                    logger.info("message received: {}", message.body().toString());
+                    LOGGER.info("message received: {}", message.body().toString());
                     assertNotNull(message);
                     orderUpMessages.add(fromJsonToOrderUp(message.body().toString()));
                 });

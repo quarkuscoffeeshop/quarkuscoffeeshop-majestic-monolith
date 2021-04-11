@@ -23,7 +23,7 @@ import java.util.stream.Stream;
 public class Order extends PanacheEntityBase {
 
     @Transient
-    static Logger logger = LoggerFactory.getLogger(Order.class);
+    static Logger LOGGER = LoggerFactory.getLogger(Order.class);
 
     @Id
     @Column(nullable = false, unique = true, name = "order_id")
@@ -81,25 +81,25 @@ public class Order extends PanacheEntityBase {
         OrderEventResult orderEventResult = new OrderEventResult();
 
         if (placeOrderCommand.getBaristaItems().isPresent()) {
-            logger.debug("createOrderFromCommand adding beverages {}", placeOrderCommand.getBaristaItems().get().size());
+            LOGGER.debug("createOrderFromCommand adding beverages {}", placeOrderCommand.getBaristaItems().get().size());
 
-            logger.debug("adding Barista LineItems");
+            LOGGER.debug("adding Barista LineItems");
             placeOrderCommand.getBaristaItems().get().forEach(commandItem -> {
-                logger.debug("createOrderFromCommand adding baristaItem from {}", commandItem.toString());
+                LOGGER.debug("createOrderFromCommand adding baristaItem from {}", commandItem.toString());
                 LineItem lineItem = new LineItem(commandItem.item, commandItem.name, commandItem.price, ItemStatus.IN_PROGRESS, order);
                 order.addBaristaLineItem(lineItem);
-                logger.debug("added LineItem: {}", order.getBaristaLineItems().get().size());
+                LOGGER.debug("added LineItem: {}", order.getBaristaLineItems().get().size());
                 orderEventResult.addBaristaTicket(new OrderIn(order.getOrderId(), lineItem.getItemId(), lineItem.getItem(), lineItem.getName()));
-                logger.debug("Added Barista Ticket to OrderEventResult: {}", orderEventResult.getBaristaTickets().get().size());
+                LOGGER.debug("Added Barista Ticket to OrderEventResult: {}", orderEventResult.getBaristaTickets().get().size());
                 orderEventResult.addUpdate(new OrderUpdate(order.getOrderId(), lineItem.getItemId(), lineItem.getName(), lineItem.getItem(), OrderStatus.IN_PROGRESS));
-                logger.debug("Added Order Update to OrderEventResult: ", orderEventResult.getOrderUpdates().size());
+                LOGGER.debug("Added Order Update to OrderEventResult: ", orderEventResult.getOrderUpdates().size());
             });
         }
-        logger.debug("adding Kitchen LineItems");
+        LOGGER.debug("adding Kitchen LineItems");
         if (placeOrderCommand.getKitchenItems().isPresent()) {
-            logger.debug("createOrderFromCommand adding kitchenOrders {}", placeOrderCommand.getKitchenItems().get().size());
+            LOGGER.debug("createOrderFromCommand adding kitchenOrders {}", placeOrderCommand.getKitchenItems().get().size());
             placeOrderCommand.getKitchenItems().get().forEach(commandItem -> {
-                logger.debug("createOrderFromCommand adding kitchenItem from {}", commandItem.toString());
+                LOGGER.debug("createOrderFromCommand adding kitchenItem from {}", commandItem.toString());
                 LineItem lineItem = new LineItem(commandItem.item, commandItem.name, commandItem.price, ItemStatus.IN_PROGRESS, order);
                 order.addKitchenLineItem(lineItem);
                 orderEventResult.addKitchenTicket(new OrderIn(order.getOrderId(), lineItem.getItemId(), lineItem.getItem(), lineItem.getName()));
@@ -108,15 +108,15 @@ public class Order extends PanacheEntityBase {
         }
 
         orderEventResult.setOrder(order);
-        logger.debug("Added Order and OrderCreatedEvent to OrderEventResult: {}", orderEventResult);
+        LOGGER.debug("Added Order and OrderCreatedEvent to OrderEventResult: {}", orderEventResult);
 
-        logger.debug("returning {}", orderEventResult);
+        LOGGER.debug("returning {}", orderEventResult);
         return orderEventResult;
     }
 
     public OrderEventResult apply(final OrderUp orderUp) {
 
-        logger.debug("applying orderUp: {}", orderUp);
+        LOGGER.debug("applying orderUp: {}", orderUp);
         OrderEventResult orderEventResult = new OrderEventResult();
 
         orderEventResult.addUpdate(new OrderUpdate(
@@ -170,7 +170,7 @@ public class Order extends PanacheEntityBase {
             };
         }
 
-        logger.debug("apply OrderUp event complete: {}", this);
+        LOGGER.debug("apply OrderUp event complete: {}", this);
         orderEventResult.setOrder(this);
 
         return orderEventResult;

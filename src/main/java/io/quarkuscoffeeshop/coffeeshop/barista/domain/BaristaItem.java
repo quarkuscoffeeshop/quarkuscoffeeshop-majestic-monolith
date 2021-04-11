@@ -26,12 +26,12 @@ public class BaristaItem extends PanacheEntity {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("BaristaItem{");
-        sb.append("item='").append(item).append('\'');
-        sb.append(", timeIn=").append(timeIn);
-        sb.append(", timeUp=").append(timeUp);
-        sb.append('}');
-        return sb.toString();
+        final StringBuilder stringBuilder = new StringBuilder("BaristaItem{");
+        stringBuilder.append("item='").append(item).append('\'');
+        stringBuilder.append(", timeIn=").append(timeIn);
+        stringBuilder.append(", timeUp=").append(timeUp);
+        stringBuilder.append('}');
+        return stringBuilder.toString();
     }
 
     @Override

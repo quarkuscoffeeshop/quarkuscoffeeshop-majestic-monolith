@@ -17,7 +17,7 @@ import static io.quarkuscoffeeshop.coffeeshop.infrastructure.EventBusTopics.WEB_
 @Path("/dashboard")
 public class DashboardEndpoint {
 
-    private static final Logger logger = LoggerFactory.getLogger(DashboardEndpoint.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DashboardEndpoint.class);
 
     @Inject
     EventBus eventBus;

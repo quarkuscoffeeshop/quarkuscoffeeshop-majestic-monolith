@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @QuarkusTest
 public class OrderServiceOrderUpTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(OrderServiceOrderUpTest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(OrderServiceOrderUpTest.class);
 
     String orderId;
 
@@ -68,7 +68,7 @@ public class OrderServiceOrderUpTest {
             assertNull(e);
         }
 
-        logger.info("lookup order");
+        LOGGER.info("lookup order");
         Order order = Order.findById(orderId);
         assertNotNull(order);
         assertEquals(1, order.getBaristaLineItems().get().size());

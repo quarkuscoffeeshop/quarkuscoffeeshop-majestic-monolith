@@ -16,14 +16,14 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 @QuarkusTest
 public class CoffeeshopApiResourceTest {
 
-    Logger logger = LoggerFactory.getLogger(CoffeeshopApiResourceTest.class);
+    Logger LOGGER = LoggerFactory.getLogger(CoffeeshopApiResourceTest.class);
 
     @Test
     public void testPlaceOrder() {
 
         PlaceOrderCommand placeOrderCommand = TestUtils.mockPlaceOrderCommand();
 
-        logger.info("Testing place order with json: {}", JsonUtil.toJson(placeOrderCommand));
+        LOGGER.info("Testing place order with json: {}", JsonUtil.toJson(placeOrderCommand));
         given()
                 .contentType(MediaType.APPLICATION_JSON)
                 .when()

@@ -4,6 +4,7 @@ import io.quarkuscoffeeshop.coffeeshop.domain.commands.PlaceOrderCommand;
 import io.quarkuscoffeeshop.utils.JsonUtil;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
+import org.slf4j.logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -11,12 +12,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class JsonUtilTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(JsonUtilTest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JsonUtilTest.class);
 
     @Test
     public void testUnmarshalling() {
         PlaceOrderCommand placeOrderCommand = TestUtils.mockPlaceOrderCommand();
-        logger.info("placeOrderCommand: {}", JsonUtil.toJson(placeOrderCommand));
+        LOGGER.info("placeOrderCommand: {}", JsonUtil.toJson(placeOrderCommand));
         String result = JsonUtil.toJson(placeOrderCommand);
         System.out.println(result);
         assertNotNull(result);
