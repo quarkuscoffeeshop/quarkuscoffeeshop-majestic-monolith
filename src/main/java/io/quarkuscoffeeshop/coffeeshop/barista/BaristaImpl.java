@@ -61,13 +61,13 @@ public class BaristaImpl implements Barista {
     }
 
     @Override
-    public void onRemakeIn(Message remakeMessage) {
-
+    public void remakeOrder(Message remakeMessage) {
+        LOGGER.debug("remake: {}", remakeMessage.body().toString());
     }
 
     @Override
-    public void onCancelOrder(Message cancellationMessage) {
-
+    public void cancelOrder(Message cancellationMessage) {
+        LOGGER.debug("cancel: {}", cancellationMessage.body().toString());
     }
 
     private int calculateDelay(final Item item) {
