@@ -19,7 +19,7 @@ public class OrderIn {
 
     public final String name;
 
-    public final Instant timestamp;
+    public final Instant timeIn;
 
     @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
     public OrderIn(
@@ -31,7 +31,7 @@ public class OrderIn {
         this.itemId = itemId;
         this.item = item;
         this.name = name;
-        this.timestamp = Instant.now();
+        this.timeIn = Instant.now();
     }
 
     @Override
@@ -41,7 +41,7 @@ public class OrderIn {
                 ", lineItemId='" + itemId + '\'' +
                 ", item=" + item +
                 ", name='" + name + '\'' +
-                ", timestamp=" + timestamp +
+                ", timestamp=" + timeIn +
                 '}';
     }
 
@@ -56,7 +56,7 @@ public class OrderIn {
         if (itemId != null ? !itemId.equals(that.itemId) : that.itemId != null) return false;
         if (item != that.item) return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
-        return timestamp != null ? timestamp.equals(that.timestamp) : that.timestamp == null;
+        return timeIn != null ? timeIn.equals(that.timeIn) : that.timeIn == null;
     }
 
     @Override
@@ -65,7 +65,7 @@ public class OrderIn {
         result = 31 * result + (itemId != null ? itemId.hashCode() : 0);
         result = 31 * result + (item != null ? item.hashCode() : 0);
         result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (timestamp != null ? timestamp.hashCode() : 0);
+        result = 31 * result + (timeIn != null ? timeIn.hashCode() : 0);
         return result;
     }
 }

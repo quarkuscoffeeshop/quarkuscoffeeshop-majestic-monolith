@@ -60,6 +60,16 @@ public class BaristaImpl implements Barista {
         eventBus.<OrderUp>publish(ORDERS_UP, JsonUtil.toJson(orderUp));
     }
 
+    @Override
+    public void onRemakeIn(Message remakeMessage) {
+
+    }
+
+    @Override
+    public void onCancelOrder(Message cancellationMessage) {
+
+    }
+
     private int calculateDelay(final Item item) {
         switch (item) {
             case COFFEE_BLACK:

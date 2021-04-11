@@ -10,7 +10,7 @@ public class OrderUp extends OrderIn{
 
     public final String madeBy;
 
-    public final Instant timestamp;
+    public final Instant timeUp;
 
     @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
     public OrderUp(
@@ -18,10 +18,10 @@ public class OrderUp extends OrderIn{
             @JsonProperty("lineItemId") String lineItemId,
             @JsonProperty("item") Item item,
             @JsonProperty("name") String name,
-            @JsonProperty("timestamp") Instant timestamp,
+            @JsonProperty("timestamp") Instant timeUp,
             @JsonProperty("madeBy") String madeBy) {
         super(orderId, lineItemId, item, name);
-        this.timestamp = timestamp;
+        this.timeUp = timeUp;
         this.madeBy = madeBy;
     }
 
@@ -32,7 +32,7 @@ public class OrderUp extends OrderIn{
                 ", lineItemId='" + itemId + '\'' +
                 ", item=" + item +
                 ", name='" + name + '\'' +
-                ", timestamp=" + timestamp +
+                ", timestamp=" + timeUp +
                 ", madeBy='" + madeBy + '\'' +
                 '}';
     }

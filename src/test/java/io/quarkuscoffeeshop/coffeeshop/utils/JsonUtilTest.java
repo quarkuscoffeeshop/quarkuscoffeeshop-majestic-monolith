@@ -4,7 +4,6 @@ import io.quarkuscoffeeshop.coffeeshop.domain.commands.PlaceOrderCommand;
 import io.quarkuscoffeeshop.utils.JsonUtil;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
-import org.slf4j.logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
