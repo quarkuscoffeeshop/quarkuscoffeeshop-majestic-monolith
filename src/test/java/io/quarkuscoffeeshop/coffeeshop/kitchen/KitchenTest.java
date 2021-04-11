@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @QuarkusTest
 public class KitchenTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(BaristaTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(KitchenTest.class);
 
     @Inject
     EventBus eventBus;
