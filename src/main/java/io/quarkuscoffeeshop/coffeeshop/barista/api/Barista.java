@@ -15,3 +15,4 @@ public interface Barista {
     public void onRemakeIn(final Message remakeMessage);
 
     public void onCancelOrder(final Message cancellationMessage);
+}

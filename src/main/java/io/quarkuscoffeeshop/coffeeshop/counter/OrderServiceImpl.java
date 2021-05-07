@@ -39,7 +39,9 @@ public class OrderServiceImpl implements OrderService {
     public void onOrderIn(final PlaceOrderCommand placeOrderCommand) {
         LOGGER.debug("PlaceOrderCommand received: {}", placeOrderCommand);
         OrderEventResult orderEventResult = Order.from(placeOrderCommand);
+
         orderRepository.persist(orderEventResult.getOrder());
+
         orderEventResult.getOrderUpdates().forEach(orderUpdate -> {
             eventBus.publish(WEB_UPDATES, JsonUtil.toJson(orderUpdate));
             LOGGER.debug("sent web update: {}", orderUpdate);
@@ -92,49 +94,6 @@ public class OrderServiceImpl implements OrderService {
         orderRepository.persistAndFlush(order);
     }
 
-    private Uni<OrderEventResult> fromPlaceOrderCommand(final PlaceOrderCommand placeOrderCommand) {
-        return Uni.createFrom().item(Order.from(placeOrderCommand));
-    }
-
-    /**
-     * Create an Order and releated value objects and events
-     * Persist the order
-     * Dispatch appropriate value objects to the event bus
-     * Dispatch appropriate events
-     */
-    public void onOrderIn2(final PlaceOrderCommand placeOrderCommand) {
-        LOGGER.debug("PlaceOrderCommand received: {}", placeOrderCommand);
-
-        OrderEventResult orderEventResult = Order.from(placeOrderCommand);
-        LOGGER.debug("OrderEventResult returned: {}", orderEventResult);
-
-        LOGGER.debug("sending {} web updates to notifiy the dashboard that the order is in progress", orderEventResult.getOrderUpdates().size());
-
-        orderEventResult.getOrderUpdates().forEach(orderUpdate -> {
-            eventBus.send(WEB_UPDATES, JsonUtil.toJson(orderUpdate));
-            LOGGER.debug("sent web update: {}", orderUpdate);
-        });
-
-        if (orderEventResult.getBaristaTickets().isPresent()) {
-            orderEventResult.getBaristaTickets().get().forEach(baristaTicket -> {
-                eventBus.send(BARISTA_IN, JsonUtil.toJson(baristaTicket));
-                LOGGER.debug("sent to barista: {}", baristaTicket);
-            });
-        }
-
-        if (orderEventResult.getKitchenTickets().isPresent()) {
-            orderEventResult.getKitchenTickets().get().forEach(kitchenTicket -> {
-                eventBus.send(KITCHEN_IN, JsonUtil.toJson(kitchenTicket));
-                LOGGER.debug("sent to kitchen: {}", kitchenTicket);
-            });
-        }
-
-    }
-
-    private Order retrieveOrder(final String orderId) {
-        return orderRepository.findById(orderId);
-    }
-
     @Override
     @ConsumeEvent(ORDERS_UP)
     @Blocking
@@ -153,21 +112,21 @@ public class OrderServiceImpl implements OrderService {
 
     }
 
-    private Uni<OrderEventResult> applyOrderUp3(final OrderUp orderUp) {
-        return Uni.createFrom().item(orderUp)
-                .map(o -> {
-                    Order order = orderRepository.findById(o.orderId);
-                    OrderEventResult orderEventResult = order.apply(orderUp);
-                    LOGGER.debug("After applying OrderUp event Order: {}", orderEventResult.getOrder());
-                    orderEventResult.getOrderUpdates().forEach(orderUpdate -> {
-                        eventBus.send(WEB_UPDATES, toJson(orderUpdate));
-                        LOGGER.debug("sent web update: {}", orderUpdate);
-                    });
-//                    orderRepository.persistAndFlush(order);
-                    LOGGER.debug("persisted order: {}", orderEventResult.getOrder());
-                    return orderEventResult;
-                });
-    }
+//    private Uni<OrderEventResult> applyOrderUp3(final OrderUp orderUp) {
+//        return Uni.createFrom().item(orderUp)
+//                .map(o -> {
+//                    Order order = orderRepository.findById(o.orderId);
+//                    OrderEventResult orderEventResult = order.apply(orderUp);
+//                    LOGGER.debug("After applying OrderUp event Order: {}", orderEventResult.getOrder());
+//                    orderEventResult.getOrderUpdates().forEach(orderUpdate -> {
+//                        eventBus.send(WEB_UPDATES, toJson(orderUpdate));
+//                        LOGGER.debug("sent web update: {}", orderUpdate);
+//                    });
+////                    orderRepository.persistAndFlush(order);
+//                    LOGGER.debug("persisted order: {}", orderEventResult.getOrder());
+//                    return orderEventResult;
+//                });
+//    }
 
 //    @Override @Transactional
 //    public void onOrderIn(final PlaceOrderCommand placeOrderCommand) {
