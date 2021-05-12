@@ -75,7 +75,7 @@ public class OrderServiceOrderUpTest {
         Order order = Order.findById(orderId);
         assertNotNull(order);
         assertEquals(1, order.getBaristaLineItems().get().size());
-        assertEquals(ItemStatus.FULFILLED, order.getBaristaLineItems().get().get(0).getItemStatus());
+        assertEquals(ItemStatus.FULFILLED, order.getBaristaLineItems().get().stream().findFirst().get().getItemStatus());
         assertEquals(0, order.getKitchenLineItems().get().size());
         assertEquals(OrderStatus.FULFILLED, order.getOrderStatus());
     }

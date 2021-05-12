@@ -1,5 +1,7 @@
 package io.quarkuscoffeeshop.coffeeshop.domain.valueobjects;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.quarkuscoffeeshop.coffeeshop.domain.Item;
 import io.quarkuscoffeeshop.coffeeshop.domain.OrderStatus;
 
@@ -17,7 +19,13 @@ public class OrderUpdate {
 
     public final String madeBy;
 
-    public OrderUpdate(final String orderId, final String itemId, final String name, final Item item, final OrderStatus status) {
+    @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+    public OrderUpdate(
+            @JsonProperty("orderId") final String orderId,
+            @JsonProperty("itemId") final String itemId,
+            @JsonProperty("name") final String name,
+            @JsonProperty("item") final Item item,
+            @JsonProperty("status") final OrderStatus status) {
         this.orderId = orderId;
         this.itemId = itemId;
         this.name = name;

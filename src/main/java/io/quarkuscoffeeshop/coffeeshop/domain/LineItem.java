@@ -74,8 +74,7 @@ public class LineItem extends PanacheEntityBase {
 
     @Override
     public int hashCode() {
-        int result = order != null ? order.hashCode() : 0;
-        result = 31 * result + (itemId != null ? itemId.hashCode() : 0);
+        int result = (itemId != null ? itemId.hashCode() : 0);
         result = 31 * result + (item != null ? item.hashCode() : 0);
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (price != null ? price.hashCode() : 0);

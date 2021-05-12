@@ -12,9 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.persistence.*;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -43,10 +41,10 @@ public class Order extends PanacheEntityBase {
     private Location location;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "order", cascade = CascadeType.ALL, targetEntity = BaristaLineItem.class)
-    private List<BaristaLineItem> baristaLineItems;
+    private Set<BaristaLineItem> baristaLineItems;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "order", cascade = CascadeType.ALL, targetEntity = KitchenLineItem.class)
-    private List<KitchenLineItem> kitchenLineItems;
+    private Set<KitchenLineItem> kitchenLineItems;
 
     protected Order() {
 
@@ -183,7 +181,7 @@ public class Order extends PanacheEntityBase {
      */
     public void addBaristaLineItem(BaristaLineItem lineItem) {
         if (this.baristaLineItems == null) {
-            this.baristaLineItems = new ArrayList<>();
+            this.baristaLineItems = new HashSet<>();
         }
         lineItem.setOrder(this);
         this.baristaLineItems.add(lineItem);
@@ -196,7 +194,7 @@ public class Order extends PanacheEntityBase {
      */
     public void addKitchenLineItem(KitchenLineItem lineItem) {
         if (this.kitchenLineItems == null) {
-            this.kitchenLineItems = new ArrayList<>();
+            this.kitchenLineItems = new HashSet<>();
         }
         lineItem.setOrder(this);
         this.kitchenLineItems.add(lineItem);
@@ -217,7 +215,7 @@ public class Order extends PanacheEntityBase {
      *
      * @return Optional<String>
      */
-    public Optional<List<? extends LineItem>> getBaristaLineItems() {
+    public Optional<Set<? extends LineItem>> getBaristaLineItems() {
         return Optional.ofNullable(baristaLineItems);
     }
 
@@ -226,7 +224,7 @@ public class Order extends PanacheEntityBase {
      *
      * @return Optional<String>
      */
-    public Optional<List<? extends LineItem>> getKitchenLineItems() {
+    public Optional<Set<? extends LineItem>> getKitchenLineItems() {
         return Optional.ofNullable(kitchenLineItems);
     }
 
@@ -332,11 +330,11 @@ public class Order extends PanacheEntityBase {
         this.location = location;
     }
 
-    public void setBaristaLineItems(List<BaristaLineItem> baristaLineLineItems) {
+    public void setBaristaLineItems(HashSet<BaristaLineItem> baristaLineLineItems) {
         this.baristaLineItems = baristaLineLineItems;
     }
 
-    public void setKitchenLineItems(List<KitchenLineItem> kitchenLineLineItems) {
+    public void setKitchenLineItems(HashSet<KitchenLineItem> kitchenLineLineItems) {
         this.kitchenLineItems = kitchenLineLineItems;
     }
 }

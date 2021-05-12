@@ -1,6 +1,7 @@
 package io.quarkuscoffeeshop.coffeeshop.counter;
 
 import io.quarkus.test.junit.QuarkusTest;
+import io.quarkuscoffeeshop.coffeeshop.domain.BaristaLineItem;
 import io.quarkuscoffeeshop.coffeeshop.utils.TestUtils;
 import io.quarkuscoffeeshop.coffeeshop.counter.api.OrderService;
 import io.quarkuscoffeeshop.coffeeshop.counter.domain.OrderEventResult;
@@ -25,7 +26,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import javax.transaction.Transactional;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static io.quarkuscoffeeshop.coffeeshop.infrastructure.EventBusTopics.ORDERS_UP;
 import static io.quarkuscoffeeshop.coffeeshop.infrastructure.EventBusTopics.WEB_UPDATES;
@@ -70,7 +73,7 @@ public class OrderServiceTest {
 
         Order order = Order.findById(placeOrderCommand.getId());
         assertNotNull(order);
-        assertEquals(ItemStatus.IN_PROGRESS, order.getBaristaLineItems().get().get(0).getItemStatus());
+        assertEquals(ItemStatus.IN_PROGRESS, order.getBaristaLineItems().get().stream().findFirst().get().getItemStatus());
         assertEquals(OrderStatus.IN_PROGRESS, order.getOrderStatus());
 
         try {
@@ -80,38 +83,4 @@ public class OrderServiceTest {
         }
     }
 
-    @Test @Transactional
-    public void testOnOrderUp() {
-
-        PlaceOrderCommand placeOrderCommand = TestUtils.mockPlaceOrderCommand();
-        OrderEventResult orderEventResult = Order.from(placeOrderCommand);
-        orderEventResult.getOrder().persist();
-
-        // create the OrderUp value object that would be returned by the Barista
-        OrderIn orderIn = orderEventResult.getBaristaTickets().get().get(0);
-        OrderUp orderUp = new OrderUp(
-                orderIn.orderId,
-                orderIn.itemId,
-                orderIn.item,
-                orderIn.name,
-                Instant.now(),
-                "Igor");
-
-        // send the OrderUp value object to the appropriate channel where it should trigger the OrderService.onOrderUp method
-        eventBus.sendAndForget(ORDERS_UP, JsonUtil.toJson(orderUp));
-
-        // give the OrderService time to process the Order
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            assertNull(e);
-        }
-
-        Order order = Order.findById(placeOrderCommand.getId());
-        assertNotNull(order);
-        assertEquals(1, order.getBaristaLineItems().get().size());
-        assertEquals(ItemStatus.FULFILLED, order.getBaristaLineItems().get().get(0).getItemStatus());
-        assertEquals(0, order.getKitchenLineItems().get().size());
-        assertEquals(OrderStatus.FULFILLED, order.getOrderStatus());
-    }
 }
