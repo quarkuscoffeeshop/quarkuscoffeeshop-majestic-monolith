@@ -42,11 +42,11 @@ public class Order extends PanacheEntityBase {
     @Enumerated(EnumType.STRING)
     private Location location;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "order", cascade = CascadeType.ALL)
-    private List<LineItem> baristaLineItems;
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "order", cascade = CascadeType.ALL, targetEntity = BaristaLineItem.class)
+    private List<BaristaLineItem> baristaLineItems;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "order", cascade = CascadeType.ALL)
-    private List<LineItem> kitchenLineItems;
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "order", cascade = CascadeType.ALL, targetEntity = KitchenLineItem.class)
+    private List<KitchenLineItem> kitchenLineItems;
 
     protected Order() {
 
@@ -69,6 +69,7 @@ public class Order extends PanacheEntityBase {
      */
     public static OrderEventResult from(final PlaceOrderCommand placeOrderCommand) {
 
+
         // build the order from the PlaceOrderCommand
         Order order = new Order(placeOrderCommand.getId());
         order.setOrderSource(placeOrderCommand.getOrderSource());
@@ -85,7 +86,7 @@ public class Order extends PanacheEntityBase {
             LOGGER.debug("adding Barista LineItems");
             placeOrderCommand.getBaristaLineItems().get().forEach(commandItem -> {
                 LOGGER.debug("createOrderFromCommand adding baristaItem from {}", commandItem.toString());
-                LineItem lineItem = new LineItem(commandItem.item, commandItem.name, commandItem.price, ItemStatus.IN_PROGRESS, order);
+                BaristaLineItem lineItem = new BaristaLineItem(commandItem.item, commandItem.name, commandItem.price, ItemStatus.IN_PROGRESS, order);
                 order.addBaristaLineItem(lineItem);
                 LOGGER.debug("added LineItem: {}", order.getBaristaLineItems().get().size());
                 orderEventResult.addBaristaTicket(new OrderIn(order.getOrderId(), lineItem.getItemId(), lineItem.getItem(), lineItem.getName()));
@@ -99,7 +100,7 @@ public class Order extends PanacheEntityBase {
             LOGGER.debug("createOrderFromCommand adding kitchenOrders {}", placeOrderCommand.getKitchenLineItems().get().size());
             placeOrderCommand.getKitchenLineItems().get().forEach(commandItem -> {
                 LOGGER.debug("createOrderFromCommand adding kitchenItem from {}", commandItem.toString());
-                LineItem lineItem = new LineItem(commandItem.item, commandItem.name, commandItem.price, ItemStatus.IN_PROGRESS, order);
+                KitchenLineItem lineItem = new KitchenLineItem(commandItem.item, commandItem.name, commandItem.price, ItemStatus.IN_PROGRESS, order);
                 order.addKitchenLineItem(lineItem);
                 orderEventResult.addKitchenTicket(new OrderIn(order.getOrderId(), lineItem.getItemId(), lineItem.getItem(), lineItem.getName()));
                 orderEventResult.addUpdate(new OrderUpdate(order.getOrderId(), lineItem.getItemId(), lineItem.getName(), lineItem.getItem(), OrderStatus.IN_PROGRESS));
@@ -180,7 +181,7 @@ public class Order extends PanacheEntityBase {
      *
      * @param lineItem
      */
-    public void addBaristaLineItem(LineItem lineItem) {
+    public void addBaristaLineItem(BaristaLineItem lineItem) {
         if (this.baristaLineItems == null) {
             this.baristaLineItems = new ArrayList<>();
         }
@@ -193,7 +194,7 @@ public class Order extends PanacheEntityBase {
      *
      * @param lineItem
      */
-    public void addKitchenLineItem(LineItem lineItem) {
+    public void addKitchenLineItem(KitchenLineItem lineItem) {
         if (this.kitchenLineItems == null) {
             this.kitchenLineItems = new ArrayList<>();
         }
@@ -216,7 +217,7 @@ public class Order extends PanacheEntityBase {
      *
      * @return Optional<String>
      */
-    public Optional<List<LineItem>> getBaristaLineItems() {
+    public Optional<List<? extends LineItem>> getBaristaLineItems() {
         return Optional.ofNullable(baristaLineItems);
     }
 
@@ -225,7 +226,7 @@ public class Order extends PanacheEntityBase {
      *
      * @return Optional<String>
      */
-    public Optional<List<LineItem>> getKitchenLineItems() {
+    public Optional<List<? extends LineItem>> getKitchenLineItems() {
         return Optional.ofNullable(kitchenLineItems);
     }
 
@@ -331,11 +332,11 @@ public class Order extends PanacheEntityBase {
         this.location = location;
     }
 
-    public void setBaristaLineItems(List<LineItem> baristaLineLineItems) {
+    public void setBaristaLineItems(List<BaristaLineItem> baristaLineLineItems) {
         this.baristaLineItems = baristaLineLineItems;
     }
 
-    public void setKitchenLineItems(List<LineItem> kitchenLineLineItems) {
+    public void setKitchenLineItems(List<KitchenLineItem> kitchenLineLineItems) {
         this.kitchenLineItems = kitchenLineLineItems;
     }
 }

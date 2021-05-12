@@ -10,7 +10,8 @@ import java.util.UUID;
 
 @JsonIgnoreProperties(value = { "orderId" })
 @Entity
-@Table(name = "items")
+@Inheritance( strategy = InheritanceType.SINGLE_TABLE )
+@DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
 public class LineItem extends PanacheEntityBase {
 
     @JsonIgnore
