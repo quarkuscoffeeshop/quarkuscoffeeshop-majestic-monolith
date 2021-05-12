@@ -69,7 +69,6 @@ public class Order extends PanacheEntityBase {
      */
     public static OrderEventResult from(final PlaceOrderCommand placeOrderCommand) {
 
-
         // build the order from the PlaceOrderCommand
         Order order = new Order(placeOrderCommand.getId());
         order.setOrderSource(placeOrderCommand.getOrderSource());
@@ -80,11 +79,11 @@ public class Order extends PanacheEntityBase {
         // create the return value
         OrderEventResult orderEventResult = new OrderEventResult();
 
-        if (placeOrderCommand.getBaristaItems().isPresent()) {
-            LOGGER.debug("createOrderFromCommand adding beverages {}", placeOrderCommand.getBaristaItems().get().size());
+        if (placeOrderCommand.getBaristaLineItems().isPresent()) {
+            LOGGER.debug("createOrderFromCommand adding beverages {}", placeOrderCommand.getBaristaLineItems().get().size());
 
             LOGGER.debug("adding Barista LineItems");
-            placeOrderCommand.getBaristaItems().get().forEach(commandItem -> {
+            placeOrderCommand.getBaristaLineItems().get().forEach(commandItem -> {
                 LOGGER.debug("createOrderFromCommand adding baristaItem from {}", commandItem.toString());
                 LineItem lineItem = new LineItem(commandItem.item, commandItem.name, commandItem.price, ItemStatus.IN_PROGRESS, order);
                 order.addBaristaLineItem(lineItem);
@@ -96,9 +95,9 @@ public class Order extends PanacheEntityBase {
             });
         }
         LOGGER.debug("adding Kitchen LineItems");
-        if (placeOrderCommand.getKitchenItems().isPresent()) {
-            LOGGER.debug("createOrderFromCommand adding kitchenOrders {}", placeOrderCommand.getKitchenItems().get().size());
-            placeOrderCommand.getKitchenItems().get().forEach(commandItem -> {
+        if (placeOrderCommand.getKitchenLineItems().isPresent()) {
+            LOGGER.debug("createOrderFromCommand adding kitchenOrders {}", placeOrderCommand.getKitchenLineItems().get().size());
+            placeOrderCommand.getKitchenLineItems().get().forEach(commandItem -> {
                 LOGGER.debug("createOrderFromCommand adding kitchenItem from {}", commandItem.toString());
                 LineItem lineItem = new LineItem(commandItem.item, commandItem.name, commandItem.price, ItemStatus.IN_PROGRESS, order);
                 order.addKitchenLineItem(lineItem);

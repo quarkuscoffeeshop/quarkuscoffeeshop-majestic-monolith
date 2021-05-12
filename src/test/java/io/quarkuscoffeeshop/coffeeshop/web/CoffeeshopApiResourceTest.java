@@ -1,7 +1,9 @@
 package io.quarkuscoffeeshop.coffeeshop.web;
 
+import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkuscoffeeshop.coffeeshop.domain.commands.PlaceOrderCommand;
+import io.quarkuscoffeeshop.coffeeshop.utils.PostgresTestResource;
 import io.quarkuscoffeeshop.coffeeshop.utils.TestUtils;
 import io.quarkuscoffeeshop.utils.JsonUtil;
 import org.junit.jupiter.api.Test;
@@ -14,6 +16,7 @@ import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 @QuarkusTest
+@QuarkusTestResource(PostgresTestResource.class)
 public class CoffeeshopApiResourceTest {
 
     Logger LOGGER = LoggerFactory.getLogger(CoffeeshopApiResourceTest.class);

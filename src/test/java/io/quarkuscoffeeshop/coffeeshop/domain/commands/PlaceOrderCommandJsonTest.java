@@ -20,57 +20,16 @@ public class PlaceOrderCommandJsonTest {
 
     @Test
     public void testDeserialization() {
-        String json = "{\"id\":\"1e08c459-7e9e-463d-9c19-608688d1a63e\",\"orderSource\":\"COUNTER\",\"location\":\"ATLANTA\",\"loyaltyMemberId\":\"StarshipCaptain\",\"baristaItems\":[{\"name\":\"Jeremy\",\"item\":\"COFFEE_BLACK\",\"price\":3.50}],\"kitchenItems\":[]}";
-        String json1 = "{\"commandType\":\"PLACE_ORDER\",\"id\":\"1e08c459-7e9e-463d-9c19-608688d1a63e\",\"orderSource\":\"COUNTER\",\"location\":\"ATLANTA\",\"loyaltyMemberId\":\"StarshipCaptain\",\"baristaItems\":[{\"name\":\"Jeremy\",\"item\":\"COFFEE_BLACK\",\"price\":3.50}],\"kitchenItems\":[]}";
+        String json = "{\"id\":\"1e08c459-7e9e-463d-9c19-608688d1a63e\",\"orderSource\":\"COUNTER\",\"location\":\"ATLANTA\",\"loyaltyMemberId\":\"StarshipCaptain\",\"baristaLineItems\":[{\"name\":\"Jeremy\",\"item\":\"COFFEE_BLACK\",\"price\":3.50}],\"kitchenLineItems\":[]}";
+        String json1 = "{\"commandType\":\"PLACE_ORDER\",\"id\":\"1e08c459-7e9e-463d-9c19-608688d1a63e\",\"orderSource\":\"COUNTER\",\"location\":\"ATLANTA\",\"loyaltyMemberId\":\"StarshipCaptain\",\"baristaLineItems\":[{\"name\":\"Jeremy\",\"item\":\"COFFEE_BLACK\",\"price\":3.50}],\"kitchenLineItems\":[]}";
 
-        OrderCommand orderCommand = JsonUtil.fromJson(json1, OrderCommand.class);
+        PlaceOrderCommand orderCommand = JsonUtil.fromJson(json1, PlaceOrderCommand.class);
         assertNotNull(orderCommand);
-        assertEquals("1e08c459-7e9e-463d-9c19-608688d1a63e", orderCommand.id);
-        assertEquals(OrderSource.COUNTER, orderCommand.orderSource);
-        assertEquals(Location.ATLANTA, orderCommand.location);
-        assertEquals("StarshipCaptain", orderCommand.loyaltyMemberId);
-        assertNotNull(orderCommand.baristaItems);
-        assertEquals(CommandType.PLACE_ORDER, orderCommand.commandType);
+        assertEquals("1e08c459-7e9e-463d-9c19-608688d1a63e", orderCommand.getId());
+        assertEquals(OrderSource.COUNTER, orderCommand.getOrderSource());
+        assertEquals(Location.ATLANTA, orderCommand.getLocation());
+        assertEquals("StarshipCaptain", orderCommand.getLoyaltyMemberId().get());
+        assertNotNull(orderCommand.getBaristaLineItems());
     }
 
-    static class OrderCommand{
-
-        final CommandType commandType = CommandType.PLACE_ORDER;
-        final String id;
-        final OrderSource orderSource;
-        final Location location;
-        final String loyaltyMemberId;
-        final List<CommandItem> baristaItems;
-        final List<CommandItem> kitchenItems;
-
-        @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
-        public OrderCommand(
-                @JsonProperty("id") final String id,
-                @JsonProperty("orderSource") final OrderSource orderSource,
-                @JsonProperty("location") final Location location,
-                @JsonProperty("loyaltyMemberId") final Optional<String> loyaltyMemberId,
-                @JsonProperty("baristaItems") final Optional<List<CommandItem>> baristaItems,
-                @JsonProperty("kitchenItems") final Optional<List<CommandItem>> kitchenItems,
-                @JsonProperty("commandType") final CommandType commandType
-                ) {
-            this.id = id;
-            this.orderSource = orderSource;
-            this.location = location;
-            if (loyaltyMemberId.isPresent()) {
-                this.loyaltyMemberId = loyaltyMemberId.get();
-            }else {
-                this.loyaltyMemberId = null;
-            }
-            if (baristaItems.isPresent()) {
-                this.baristaItems = baristaItems.get();
-            }else {
-                this.baristaItems = null;
-            }
-            if (kitchenItems.isPresent()) {
-                this.kitchenItems = baristaItems.get();
-            }else {
-                this.kitchenItems = null;
-            }
-        }
-    }
 }

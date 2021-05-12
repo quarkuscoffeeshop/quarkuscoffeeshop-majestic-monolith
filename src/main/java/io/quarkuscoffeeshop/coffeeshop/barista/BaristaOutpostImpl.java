@@ -18,12 +18,13 @@ public class BaristaOutpostImpl implements Barista {
     }
 
     @Override
-    public void onRemakeIn(final Message remakeMessage) {
+    public void remakeOrder(Message remakeMessage) {
         baristaEmitter.send(JsonUtil.fromJsonToOrderIn(remakeMessage.body().toString()));
     }
 
     @Override
-    public void onCancelOrder(final Message cancellationMessage) {
+    public void cancelOrder(Message cancellationMessage) {
         baristaEmitter.send(JsonUtil.fromJsonToOrderIn(cancellationMessage.body().toString()));
     }
+
 }

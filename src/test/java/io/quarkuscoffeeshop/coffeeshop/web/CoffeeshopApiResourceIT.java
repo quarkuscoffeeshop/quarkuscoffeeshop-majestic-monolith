@@ -26,8 +26,8 @@ public class CoffeeshopApiResourceIT {
 
     @Test
     public void testJson() {
-        String json = "{\"id\":\"1e08c459-7e9e-463d-9c19-608688d1a63e\",\"orderSource\":\"COUNTER\",\"location\":\"ATLANTA\",\"loyaltyMemberId\":\"StarshipCaptain\",\"baristaItems\":[{\"name\":\"Jeremy\",\"item\":\"COFFEE_BLACK\",\"price\":3.50}],\"kitchenItems\":[]}";
-        String jsop =                                 "{\"commandType\":\"PLACE_ORDER\",\"id\":\"985176b9-fb9a-4bec-87b5-501240f65b96\",\"orderSource\":\"COUNTER\",\"location\":\"ATLANTA\",\"loyaltyMemberId\":\"StarshipCaptain\",\"baristaItems\":[{\"item\":\"COFFEE_BLACK\",\"name\":\"Kirk\",\"price\":3.0}],\"kitchenItems\":null,\"timestamp\":1616611945.403978000}";
+        String json = "{\"id\":\"1e08c459-7e9e-463d-9c19-608688d1a63e\",\"orderSource\":\"COUNTER\",\"location\":\"ATLANTA\",\"loyaltyMemberId\":\"StarshipCaptain\",\"baristaLineItems\":[{\"name\":\"Jeremy\",\"item\":\"COFFEE_BLACK\",\"price\":3.50}],\"kitchenLineItems\":[]}";
+        String jsop =                                 "{\"commandType\":\"PLACE_ORDER\",\"id\":\"985176b9-fb9a-4bec-87b5-501240f65b96\",\"orderSource\":\"COUNTER\",\"location\":\"ATLANTA\",\"loyaltyMemberId\":\"StarshipCaptain\",\"baristaLineItems\":[{\"item\":\"COFFEE_BLACK\",\"name\":\"Kirk\",\"price\":3.0}],\"kitchenLineItems\":null,\"timestamp\":1616611945.403978000}";
 
         given()
                 .contentType(MediaType.APPLICATION_JSON)
