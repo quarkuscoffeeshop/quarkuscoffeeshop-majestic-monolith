@@ -8,7 +8,31 @@ If you want to learn more about Quarkus, please visit its website: https://quark
 
 You can run your application in dev mode that enables live coding using:
 ```shell script
+
 ./mvnw compile quarkus:dev
+```
+
+## Running in prod
+```shell script
+export PGSQL_URL="jdbc:postgresql://localhost:5432/coffeeshopdb?currentSchema=coffeeshop" \
+PGSQL_USER="coffeeshopuser" \
+PGSQL_PASSWORD="redhat-21" \
+PGSQL_URL_BARISTA="jdbc:postgresql://localhost:5432/coffeeshopdb?currentSchema=barista" \
+PGSQL_USER_BARISTA="coffeeshopuser" \
+PGSQL_PASSWORD_BARISTA="redhat-21" \
+PGSQL_URL_KITCHEN="jdbc:postgresql://localhost:5432/coffeeshopdb?currentSchema=kitchen" \
+PGSQL_USER_KITCHEN="coffeeshopuser" \
+PGSQL_PASSWORD_KITCHEN="redhat-21"
+
+docker run quarkuscoffeeshop/quarkuscoffeeshop-majestic-monolith -e PGSQL_URL=${PGSQL_URL} \
+-e PGSQL_USER=${PGSQL_USER} \
+-e PGSQL_PASSWORD=${PGSQL_PASSWORD} \
+-e PGSQL_URL_BARISTA=${PGSQL_URL_BARISTA} \
+-e PGSQL_USER_BARISTA=${PGSQL_USER_BARISTA} \
+-e PGSQL_PASSWORD_BARISTA=${PGSQL_PASSWORD_BARISTA} \
+-e PGSQL_URL_KITCHEN=${PGSQL_URL_KITCHEN} \
+-e PGSQL_USER_KITCHEN=${PGSQL_USER_KITCHEN} \
+-e PGSQL_PASSWORD_KITCHEN=${PGSQL_PASSWORD_KITCHEN}
 ```
 
 ## Packaging and running the application
