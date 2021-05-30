@@ -60,35 +60,35 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-    public Uni<Order> onOrderInOriginal(final PlaceOrderCommand placeOrderCommand) {
-        LOGGER.debug("PlaceOrderCommand received: {}", placeOrderCommand);
-        return Uni.createFrom().item(placeOrderCommand)
-                .map(command -> {
-                    return Order.from(placeOrderCommand);
-                })
-                .map(orderEventResult -> {
-                    LOGGER.debug("OrderEventResult: {}", orderEventResult);
-                    saveOrder(orderEventResult.getOrder());
-                    if (orderEventResult.getBaristaTickets().isPresent()) {
-                        orderEventResult.getBaristaTickets().get().forEach(baristaTicket -> {
-                            eventBus.send(BARISTA_IN, JsonUtil.toJson(baristaTicket));
-                            LOGGER.debug("sent to barista: {}", baristaTicket);
-                        });
-                    }
-                    if (orderEventResult.getKitchenTickets().isPresent()) {
-                        orderEventResult.getKitchenTickets().get().forEach(kitchenTicket -> {
-                            eventBus.send(KITCHEN_IN, JsonUtil.toJson(kitchenTicket));
-                            LOGGER.debug("sent to kitchen: {}", kitchenTicket);
-                        });
-                    }
-                    orderEventResult.getOrderUpdates().forEach(orderUpdate -> {
-                        eventBus.send(WEB_UPDATES, JsonUtil.toJson(orderUpdate));
-                        LOGGER.debug("sent web update: {}", orderUpdate);
-                    });
-                    LOGGER.debug("order persiste", orderEventResult.getOrder());
-                    return orderEventResult.getOrder();
-                });
-    }
+//    public Uni<Order> onOrderInOriginal(final PlaceOrderCommand placeOrderCommand) {
+//        LOGGER.debug("PlaceOrderCommand received: {}", placeOrderCommand);
+//        return Uni.createFrom().item(placeOrderCommand)
+//                .map(command -> {
+//                    return Order.from(placeOrderCommand);
+//                })
+//                .map(orderEventResult -> {
+//                    LOGGER.debug("OrderEventResult: {}", orderEventResult);
+//                    saveOrder(orderEventResult.getOrder());
+//                    if (orderEventResult.getBaristaTickets().isPresent()) {
+//                        orderEventResult.getBaristaTickets().get().forEach(baristaTicket -> {
+//                            eventBus.send(BARISTA_IN, JsonUtil.toJson(baristaTicket));
+//                            LOGGER.debug("sent to barista: {}", baristaTicket);
+//                        });
+//                    }
+//                    if (orderEventResult.getKitchenTickets().isPresent()) {
+//                        orderEventResult.getKitchenTickets().get().forEach(kitchenTicket -> {
+//                            eventBus.send(KITCHEN_IN, JsonUtil.toJson(kitchenTicket));
+//                            LOGGER.debug("sent to kitchen: {}", kitchenTicket);
+//                        });
+//                    }
+//                    orderEventResult.getOrderUpdates().forEach(orderUpdate -> {
+//                        eventBus.send(WEB_UPDATES, JsonUtil.toJson(orderUpdate));
+//                        LOGGER.debug("sent web update: {}", orderUpdate);
+//                    });
+//                    LOGGER.debug("order persiste", orderEventResult.getOrder());
+//                    return orderEventResult.getOrder();
+//                });
+//    }
 
     private void saveOrder(final Order order) {
         orderRepository.persistAndFlush(order);

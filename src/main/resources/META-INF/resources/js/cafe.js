@@ -150,19 +150,19 @@
         order.orderSource = 'WEB';
         order.storeId = storeId;
         order.rewardsId = rewards_id;
-        order.baristaItems = [];
-        order.kitchenItems = []
+        order.baristaLineItems = [];
+        order.kitchenLineItems = []
 
         if(beverages.length >= 1){
             for (i = 0; i < beverages.length; i++) {
                 console.log(beverages[i]);
-                order.baristaItems.push(beverages[i]);
+                order.baristaLineItems.push(beverages[i]);
             }
         }
         if(kitchen.length >= 1){
             for (i = 0; i < kitchen.length; i++) {
                 console.log(kitchen[i]);
-                order.kitchenItems.push(kitchen[i]);
+                order.kitchenLineItems.push(kitchen[i]);
             }
         }
 
@@ -243,32 +243,32 @@
         };
 
         // Loyalty toast notification
-        var loyaltySource = new EventSource("http://localhost:8080/dashboard/loyaltystream");
-        loyaltySource.onmessage = function(e) {
-            console.log(e);
-            var localtyReward = JSON.parse(e.data);
-            var rewardTest = "You have won a free " + localtyReward.reward + "!"
-
-            toastr.options = {
-                "closeButton": false,
-                "debug": false,
-                "newestOnTop": false,
-                "progressBar": false,
-                "positionClass": "toast-top-right",
-                "preventDuplicates": false,
-                "onclick": null,
-                "showDuration": "300",
-                "hideDuration": "1000",
-                "timeOut": "15000",
-                "extendedTimeOut": "1000",
-                "showEasing": "swing",
-                "hideEasing": "linear",
-                "showMethod": "fadeIn",
-                "hideMethod": "fadeOut"
-            }
-
-            toastr["success"](rewardTest)
-        };
+        // var loyaltySource = new EventSource("http://localhost:8080/dashboard/loyaltystream");
+        // loyaltySource.onmessage = function(e) {
+        //     console.log(e);
+        //     var localtyReward = JSON.parse(e.data);
+        //     var rewardTest = "You have won a free " + localtyReward.reward + "!"
+        //
+        //     toastr.options = {
+        //         "closeButton": false,
+        //         "debug": false,
+        //         "newestOnTop": false,
+        //         "progressBar": false,
+        //         "positionClass": "toast-top-right",
+        //         "preventDuplicates": false,
+        //         "onclick": null,
+        //         "showDuration": "300",
+        //         "hideDuration": "1000",
+        //         "timeOut": "15000",
+        //         "extendedTimeOut": "1000",
+        //         "showEasing": "swing",
+        //         "hideEasing": "linear",
+        //         "showMethod": "fadeIn",
+        //         "hideMethod": "fadeOut"
+        //     }
+        //
+        //     toastr["success"](rewardTest)
+        // };
 
     });
 
