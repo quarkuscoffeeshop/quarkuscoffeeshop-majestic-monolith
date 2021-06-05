@@ -2,6 +2,7 @@ package io.quarkuscoffeeshop.coffeeshop.utils;
 
 import io.quarkuscoffeeshop.coffeeshop.domain.Item;
 import io.quarkuscoffeeshop.coffeeshop.domain.Location;
+import io.quarkuscoffeeshop.coffeeshop.domain.Order;
 import io.quarkuscoffeeshop.coffeeshop.domain.OrderSource;
 import io.quarkuscoffeeshop.coffeeshop.domain.commands.CommandItem;
 import io.quarkuscoffeeshop.coffeeshop.domain.commands.CommandType;
@@ -24,6 +25,11 @@ public class TestUtils {
                 Optional.of("StarshipCaptain"),
                 Optional.of(Arrays.asList(new CommandItem(Item.COFFEE_BLACK, "Kirk", BigDecimal.valueOf(3.00)))),
                 Optional.empty(), CommandType.PLACE_ORDER);
+    }
+
+    public static Order mockOrder() {
+
+        return Order.from(mockPlaceOrderCommand()).getOrder();
     }
 
 }
