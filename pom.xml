@@ -7,6 +7,7 @@
   <version>1.0.3</version>
   <properties>
     <compiler-plugin.version>3.8.1</compiler-plugin.version>
+    <jacoco.version>0.8.4</jacoco.version>
     <maven.compiler.parameters>true</maven.compiler.parameters>
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
@@ -17,7 +18,6 @@
     <quarkus.platform.group-id>io.quarkus</quarkus.platform.group-id>
     <quarkus.platform.version>1.13.3.Final</quarkus.platform.version>
     <surefire-plugin.version>3.0.0-M5</surefire-plugin.version>
-    <jacoco.version>0.8.4</jacoco.version>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -67,7 +67,6 @@
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-vertx</artifactId>
     </dependency>
-    <!-- Testing -->
     <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-junit5</artifactId>
@@ -109,6 +108,10 @@
       <artifactId>quarkus-jacoco</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-smallrye-openapi</artifactId>
+    </dependency>
   </dependencies>
   <build>
     <plugins>
@@ -142,18 +145,9 @@
           </systemPropertyVariables>
         </configuration>
       </plugin>
-      <!-- Code quality -->
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-pmd-plugin</artifactId>
         <version>3.12.0</version>
-        <configuration>
-          <linkXRef>true</linkXRef>
-          <rulesets>
-            <ruleset>/rulesets/java/braces.xml</ruleset>
-            <ruleset>/rulesets/java/naming.xml</ruleset>
-          </rulesets>
-        </configuration>
         <executions>
           <execution>
             <id>pmd-scan</id>
@@ -163,11 +157,27 @@
             </goals>
           </execution>
         </executions>
+        <configuration>
+          <linkXRef>true</linkXRef>
+          <rulesets>
+            <ruleset>/rulesets/java/braces.xml</ruleset>
+            <ruleset>/rulesets/java/naming.xml</ruleset>
+          </rulesets>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>com.github.spotbugs</groupId>
         <artifactId>spotbugs-maven-plugin</artifactId>
         <version>4.2.0</version>
+        <executions>
+          <execution>
+            <id>scan</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
         <configuration>
           <effort>Max</effort>
           <threshold>Low</threshold>
@@ -180,17 +190,8 @@
             </plugin>
           </plugins>
         </configuration>
-        <executions>
-          <execution>
-            <id>scan</id>
-            <phase>verify</phase>
-            <goals>
-              <goal>check</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
-  </plugins>
+    </plugins>
   </build>
   <profiles>
     <profile>
