@@ -4,6 +4,7 @@ import io.quarkus.vertx.ConsumeEvent;
 import io.quarkuscoffeeshop.coffeeshop.domain.Order;
 import io.quarkuscoffeeshop.coffeeshop.infrastructure.OrderRepository;
 import io.smallrye.common.annotation.Blocking;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,6 +22,9 @@ public class ReporterServiceImpl implements ReporterService {
     @Inject
     OrderRepository orderRepository;
 
+    @Inject @RestClient
+    RESTReporterService restService;
+
     @Override
     @ConsumeEvent(REPORTER)
     @Blocking
@@ -30,5 +34,12 @@ public class ReporterServiceImpl implements ReporterService {
         LOGGER.debug("orderCompleted called for Order with id: {}", orderId);
         Order order = orderRepository.findById(orderId);
         LOGGER.debug("Order: {}", order);
+        restService.sendOrder(order);
+        sendOrder(order);
+        LOGGER.debug("Order sent");
+    }
+
+    private void sendOrder(final Order order) {
+        restService.sendOrder(order);
     }
 }

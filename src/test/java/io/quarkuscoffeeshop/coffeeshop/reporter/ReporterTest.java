@@ -21,9 +21,10 @@ import java.util.UUID;
 
 import static io.quarkuscoffeeshop.coffeeshop.utils.TestUtils.mockOrder;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.ArgumentMatchers.any;
 
 @QuarkusTest
-@QuarkusTestResource(PostgresTestResource.class)
+@QuarkusTestResource(PostgresTestResource.class) @QuarkusTestResource(WiremockIngress.class)
 public class ReporterTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ReporterTest.class);

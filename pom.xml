@@ -18,6 +18,7 @@
     <quarkus.platform.group-id>io.quarkus</quarkus.platform.group-id>
     <quarkus.platform.version>1.13.3.Final</quarkus.platform.version>
     <surefire-plugin.version>3.0.0-M5</surefire-plugin.version>
+    <wiremock.version>2.28.0</wiremock.version>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -66,6 +67,17 @@
     <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-vertx</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-rest-client</artifactId>
+    </dependency>
+<!-- Testing -->
+    <dependency>
+    <groupId>com.github.tomakehurst</groupId>
+    <artifactId>wiremock-jre8</artifactId>
+    <scope>test</scope>
+    <version>${wiremock.version}</version>
     </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
