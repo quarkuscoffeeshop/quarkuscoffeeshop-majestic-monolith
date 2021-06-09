@@ -3,6 +3,9 @@ package io.quarkuscoffeeshop.coffeeshop.reporter;
 import io.quarkus.vertx.ConsumeEvent;
 import io.quarkuscoffeeshop.coffeeshop.domain.Order;
 import io.quarkuscoffeeshop.coffeeshop.infrastructure.OrderRepository;
+import io.quarkuscoffeeshop.coffeeshop.reporter.domain.EventType;
+import io.quarkuscoffeeshop.coffeeshop.reporter.domain.OrderEvent;
+import io.quarkuscoffeeshop.utils.JsonUtil;
 import io.smallrye.common.annotation.Blocking;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.slf4j.Logger;
@@ -33,13 +36,10 @@ public class ReporterServiceImpl implements ReporterService {
 
         LOGGER.debug("orderCompleted called for Order with id: {}", orderId);
         Order order = orderRepository.findById(orderId);
-        LOGGER.debug("Order: {}", order);
-        restService.sendOrder(order);
-        sendOrder(order);
+        OrderEvent orderEvent = OrderEvent.from(order, EventType.OrderCreated);
+        LOGGER.debug("Sending Order to HomeOffice: {}", JsonUtil.toJson(orderEvent));
+        restService.sendOrder(orderEvent);
         LOGGER.debug("Order sent");
     }
 
-    private void sendOrder(final Order order) {
-        restService.sendOrder(order);
-    }
 }

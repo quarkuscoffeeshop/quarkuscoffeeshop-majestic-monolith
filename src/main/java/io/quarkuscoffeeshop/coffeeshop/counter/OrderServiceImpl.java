@@ -109,6 +109,7 @@ public class OrderServiceImpl implements OrderService {
         orderEventResult.getOrderUpdates().forEach(orderUpdate -> {
             eventBus.publish(WEB_UPDATES, JsonUtil.toJson(orderUpdate));
         });
+        eventBus.publish(REPORTER, order.getOrderId());
 
     }
 
