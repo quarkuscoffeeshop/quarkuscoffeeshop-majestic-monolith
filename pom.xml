@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>io.quarkuscoffeeshop.majesticmonolith</groupId>
   <artifactId>quarkuscoffeeshop-majestic-monolith</artifactId>
-  <version>1.0.3</version>
+  <version>2.0.0</version>
   <properties>
     <compiler-plugin.version>3.8.1</compiler-plugin.version>
     <jacoco.version>0.8.4</jacoco.version>
