@@ -38,7 +38,11 @@ public class ReporterServiceImpl implements ReporterService {
         Order order = orderRepository.findById(orderId);
         OrderEvent orderEvent = OrderEvent.from(order, EventType.OrderCreated);
         LOGGER.debug("Sending Order to HomeOffice: {}", JsonUtil.toJson(orderEvent));
-        restService.sendOrder(orderEvent);
+        try {
+            restService.sendOrder(orderEvent);
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+        }
         LOGGER.debug("Order sent");
     }
 
