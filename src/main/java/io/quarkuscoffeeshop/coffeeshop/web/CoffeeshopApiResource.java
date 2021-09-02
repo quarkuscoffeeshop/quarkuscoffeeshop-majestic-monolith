@@ -4,6 +4,9 @@ package io.quarkuscoffeeshop.coffeeshop.web;
 import io.quarkuscoffeeshop.coffeeshop.counter.api.OrderService;
 import io.quarkuscoffeeshop.coffeeshop.domain.commands.PlaceOrderCommand;
 import io.vertx.mutiny.core.eventbus.EventBus;
+import org.eclipse.microprofile.metrics.MetricUnits;
+import org.eclipse.microprofile.metrics.annotation.Counted;
+import org.eclipse.microprofile.metrics.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,6 +35,8 @@ public class CoffeeshopApiResource {
     @POST
     @Path("/order")
     @Transactional
+    @Counted(name = "orderPlaced", description = "How many times an order has been placed.")
+    @Timed(name = "orderPlaceTimer", description = "A measure of how long it takes to place an order.", unit = MetricUnits.MILLISECONDS)
     public Response placeOrder(final PlaceOrderCommand placeOrderCommand) {
 
         LOGGER.info("PlaceOrderCommand received: {}", placeOrderCommand);
@@ -45,7 +50,7 @@ public class CoffeeshopApiResource {
 //        webUpdater.send(message);
         LOGGER.debug("received message: {}", message);
         LOGGER.debug("sending to web-updates: {}", message);
-        eventBus.sendAndForget("web-updates", message);
+        eventBus.send("web-updates", message);
     }
 
 }
