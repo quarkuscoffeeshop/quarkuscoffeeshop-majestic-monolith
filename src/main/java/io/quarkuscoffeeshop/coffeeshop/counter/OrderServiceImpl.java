@@ -35,6 +35,9 @@ public class OrderServiceImpl implements OrderService {
     @Inject
     OrderRepository orderRepository;
 
+    public OrderServiceImpl() {
+    }
+
     @Transactional
     public void onOrderIn(final PlaceOrderCommand placeOrderCommand) {
         LOGGER.debug("PlaceOrderCommand received: {}", placeOrderCommand);
@@ -310,23 +313,4 @@ public class OrderServiceImpl implements OrderService {
         });
     }
 
-//    public void onOrderUp2(final OrderUp orderUp) {
-//
-////        OrderUp orderUp = JsonUtil.fromJson(message.body().toString(), OrderUp.class);
-//        logger.debug("order up : {}", orderUp);
-//
-//        OrderEventResult orderEventResult = Order.apply(orderUp);
-//        logger.debug("After applying OrderUp event Order: {}", orderEventResult.getOrder());
-//
-//        orderEventResult.getOrderUpdates().forEach(orderUpdate -> {
-//            eventBus.send(WEB_UPDATES, JsonUtil.toJson(orderUpdate));
-//            logger.debug("sent web update: {}", orderUpdate);
-//        });
-//
-////        orderEventResult.getOrder().persist();
-//        logger.debug("persisted order: {}", orderEventResult.getOrder());
-//    }
-
-    public OrderServiceImpl() {
-    }
 }

@@ -10,6 +10,9 @@ import io.quarkuscoffeeshop.utils.JsonUtil;
 import io.smallrye.common.annotation.Blocking;
 import io.vertx.mutiny.core.eventbus.EventBus;
 import io.vertx.mutiny.core.eventbus.Message;
+import org.eclipse.microprofile.metrics.MetricUnits;
+import org.eclipse.microprofile.metrics.annotation.Counted;
+import org.eclipse.microprofile.metrics.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +39,8 @@ public class KitchenImpl implements Kitchen {
     @ConsumeEvent(KITCHEN_IN)
     @Blocking
     @Transactional
+    @Counted(name = "kitchenOrders", description = "How many Kitchen orders are received from Kafka.")
+    @Timed(name = "kitchenOrdersTimer", description = "A measure of how long it takes to complete a Kitchen order.", unit = MetricUnits.MILLISECONDS)
     public void onOrderIn(final Message message) {
         OrderIn orderIn = JsonUtil.fromJson(message.body().toString(), OrderIn.class);
         KitchenOrder kitchenOrder = new KitchenOrder(orderIn.orderId, orderIn.item, Instant.now());

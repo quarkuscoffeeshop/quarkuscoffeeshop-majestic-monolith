@@ -12,6 +12,9 @@ import io.quarkuscoffeeshop.utils.JsonUtil;
 import io.smallrye.common.annotation.Blocking;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.mutiny.core.eventbus.Message;
+import org.eclipse.microprofile.metrics.MetricUnits;
+import org.eclipse.microprofile.metrics.annotation.Counted;
+import org.eclipse.microprofile.metrics.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +39,11 @@ public class BaristaImpl implements Barista {
     @Inject
     BaristaRepository baristaRepository;
 
-    @ConsumeEvent(BARISTA_IN) @Blocking @Transactional
+    @ConsumeEvent(BARISTA_IN)
+    @Blocking
+    @Transactional
+    @Counted(name = "baristaOrders", description = "How many Barista orders are received from Kafka.")
+    @Timed(name = "baristaOrdersTimer", description = "A measure of how long it takes to complete a Barista order.", unit = MetricUnits.MILLISECONDS)
     public void onOrderIn(final Message message) {
         OrderIn orderIn = JsonUtil.fromJson(message.body().toString(), OrderIn.class);
         BaristaItem baristaItem = new BaristaItem();
