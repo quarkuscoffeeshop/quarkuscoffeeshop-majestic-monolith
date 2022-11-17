@@ -98,7 +98,7 @@ public class OrderServiceTest {
                 "Igor");
 
         // send the OrderUp value object to the appropriate channel where it should trigger the OrderService.onOrderUp method
-        eventBus.sendAndForget(ORDERS_UP, JsonUtil.toJson(orderUp));
+        eventBus.publish(ORDERS_UP, JsonUtil.toJson(orderUp));
 
         // give the OrderService time to process the Order
         try {

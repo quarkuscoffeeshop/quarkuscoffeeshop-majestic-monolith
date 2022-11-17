@@ -45,7 +45,7 @@ public class CoffeeshopApiResource {
 //        webUpdater.send(message);
         LOGGER.debug("received message: {}", message);
         LOGGER.debug("sending to web-updates: {}", message);
-        eventBus.sendAndForget("web-updates", message);
+        eventBus.publish("web-updates", message);
     }
 
 }
