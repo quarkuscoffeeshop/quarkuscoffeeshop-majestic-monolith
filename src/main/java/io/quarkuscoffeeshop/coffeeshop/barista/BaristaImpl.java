@@ -23,12 +23,12 @@ import java.time.Instant;
 import static io.quarkuscoffeeshop.coffeeshop.infrastructure.EventBusTopics.BARISTA_IN;
 import static io.quarkuscoffeeshop.coffeeshop.infrastructure.EventBusTopics.ORDERS_UP;
 
-@Startup @ApplicationScoped
-public class BaristaImpl implements Barista {
+//@Startup @ApplicationScoped
+public class BaristaImpl {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BaristaImpl.class);
 
-    private final String madeBy = "Bones";
+    private final String madeBy = "Mr. Spock";
 
     @Inject
     EventBus eventBus;
@@ -36,7 +36,7 @@ public class BaristaImpl implements Barista {
     @Inject
     BaristaRepository baristaRepository;
 
-    @ConsumeEvent(BARISTA_IN) @Blocking @Transactional
+//    @ConsumeEvent(BARISTA_IN) @Blocking @Transactional
     public void onOrderIn(final Message message) {
         OrderIn orderIn = JsonUtil.fromJson(message.body().toString(), OrderIn.class);
         BaristaItem baristaItem = new BaristaItem();
@@ -60,15 +60,15 @@ public class BaristaImpl implements Barista {
         eventBus.<OrderUp>publish(ORDERS_UP, JsonUtil.toJson(orderUp));
     }
 
-    @Override
-    public void onRemakeIn(Message remakeMessage) {
-
-    }
-
-    @Override
-    public void onCancelOrder(Message cancellationMessage) {
-
-    }
+//    @Override
+//    public void onRemakeIn(Message remakeMessage) {
+//
+//    }
+//
+//    @Override
+//    public void onCancelOrder(Message cancellationMessage) {
+//
+//    }
 
     private int calculateDelay(final Item item) {
         switch (item) {
