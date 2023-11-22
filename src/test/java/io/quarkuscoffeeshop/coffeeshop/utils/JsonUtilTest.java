@@ -26,6 +26,6 @@ public class JsonUtilTest {
     public void testMarshalling() {
         String json = "{\"id\":\"964e94e6-700e-4dfb-99a3-1c27acf9a384\",\"orderSource\":\"COUNTER\",\"location\":\"ATLANTA\",\"loyaltyMemberId\":\"PeskyParrot\",\"timestamp\":1616519311.982413000,\"baristaItems\":null,\"kitchenItems\":null}";
         PlaceOrderCommand result = JsonUtil.fromJson(json, PlaceOrderCommand.class);
-        assertEquals("964e94e6-700e-4dfb-99a3-1c27acf9a384", result.getId());
+        assertEquals("964e94e6-700e-4dfb-99a3-1c27acf9a384", result.id());
     }
 }

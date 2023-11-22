@@ -9,21 +9,21 @@ import io.quarkuscoffeeshop.coffeeshop.domain.commands.PlaceOrderCommand;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.Arrays;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 public class TestUtils {
 
     public static PlaceOrderCommand mockPlaceOrderCommand() {
 
         return new PlaceOrderCommand(
+                CommandType.PLACE_ORDER,
                 UUID.randomUUID().toString(),
                 OrderSource.COUNTER,
                 Location.ATLANTA,
-                Optional.of("StarshipCaptain"),
-                Optional.of(Arrays.asList(new CommandItem(Item.COFFEE_BLACK, "Kirk", BigDecimal.valueOf(3.00)))),
-                Optional.empty(), CommandType.PLACE_ORDER);
+                "StarshipCaptain",
+                Arrays.asList(new CommandItem(Item.COFFEE_BLACK, "Kirk", BigDecimal.valueOf(3.00))),
+                Collections.emptyList(),
+                Instant.now());
     }
 
 }

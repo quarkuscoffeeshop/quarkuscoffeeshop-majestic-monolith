@@ -2,7 +2,6 @@ package io.quarkuscoffeeshop.coffeeshop.barista;
 
 import io.quarkus.runtime.Startup;
 import io.quarkus.vertx.ConsumeEvent;
-import io.quarkuscoffeeshop.coffeeshop.barista.api.Barista;
 import io.quarkuscoffeeshop.coffeeshop.barista.domain.BaristaItem;
 import io.quarkuscoffeeshop.coffeeshop.barista.domain.BaristaRepository;
 import io.quarkuscoffeeshop.coffeeshop.domain.Item;
@@ -23,7 +22,7 @@ import java.time.Instant;
 import static io.quarkuscoffeeshop.coffeeshop.infrastructure.EventBusTopics.BARISTA_IN;
 import static io.quarkuscoffeeshop.coffeeshop.infrastructure.EventBusTopics.ORDERS_UP;
 
-//@Startup @ApplicationScoped
+@Startup @ApplicationScoped
 public class BaristaImpl {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BaristaImpl.class);
@@ -36,7 +35,7 @@ public class BaristaImpl {
     @Inject
     BaristaRepository baristaRepository;
 
-//    @ConsumeEvent(BARISTA_IN) @Blocking @Transactional
+    @ConsumeEvent(BARISTA_IN) @Blocking @Transactional
     public void onOrderIn(final Message message) {
         OrderIn orderIn = JsonUtil.fromJson(message.body().toString(), OrderIn.class);
         BaristaItem baristaItem = new BaristaItem();
