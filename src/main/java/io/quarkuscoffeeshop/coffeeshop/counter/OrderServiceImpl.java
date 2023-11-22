@@ -73,7 +73,7 @@ public class OrderServiceImpl implements OrderService {
         LOGGER.debug("order up message: {}", message.body());
         OrderUp orderUp = fromJsonToOrderUp(message.body().toString());
 
-        Order order = orderRepository.findById(orderUp.orderId);
+        Order order = orderRepository.findById(orderUp.orderId());
         OrderEventResult orderEventResult = order.apply(orderUp);
         orderRepository.persistAndFlush(order);
         orderEventResult.getOrderUpdates().forEach(orderUpdate -> {
@@ -83,7 +83,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private OrderEventResult applyOrderUp2(final OrderUp orderUp) {
-        Order order = orderRepository.findById(orderUp.orderId);
+        Order order = orderRepository.findById(orderUp.orderId());
         OrderEventResult orderEventResult = order.apply(orderUp);
         return orderEventResult;
     }
@@ -91,7 +91,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     private CompletableFuture<OrderEventResult> applyOrderUp(final OrderUp orderUp) {
         return CompletableFuture.supplyAsync(() -> {
-            Order order = orderRepository.findById(orderUp.orderId);
+            Order order = orderRepository.findById(orderUp.orderId());
             OrderEventResult orderEventResult = order.apply(orderUp);
             LOGGER.debug("After applying OrderUp event Order: {}", orderEventResult.getOrder());
             orderEventResult.getOrderUpdates().forEach(orderUpdate -> {

@@ -39,21 +39,21 @@ public class BaristaImpl {
     public void onOrderIn(final Message message) {
         OrderIn orderIn = JsonUtil.fromJson(message.body().toString(), OrderIn.class);
         BaristaItem baristaItem = new BaristaItem();
-        baristaItem.setItem(orderIn.item.toString());
+        baristaItem.setItem(orderIn.item().toString());
         baristaItem.setTimeIn(Instant.now());
         LOGGER.debug("order in : {}", orderIn);
         try {
-            Thread.sleep(calculateDelay(orderIn.item));
+            Thread.sleep(calculateDelay(orderIn.item()));
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
         OrderUp orderUp = new OrderUp(
-                orderIn.orderId,
-                orderIn.itemId,
-                orderIn.item,
-                orderIn.name,
-                Instant.now(),
-                madeBy);
+                orderIn.orderId(),
+                orderIn.itemId(),
+                orderIn.item(),
+                orderIn.name(),
+                madeBy,
+                Instant.now());
         baristaItem.setTimeUp(Instant.now());
         baristaRepository.persist(baristaItem);
         eventBus.<OrderUp>publish(ORDERS_UP, JsonUtil.toJson(orderUp));

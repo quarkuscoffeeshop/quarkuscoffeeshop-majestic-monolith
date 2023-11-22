@@ -85,14 +85,10 @@ public class Order extends PanacheEntityBase {
 
             LOGGER.debug("adding Barista LineItems");
             placeOrderCommand.baristaItems().forEach(commandItem -> {
-                LOGGER.debug("createOrderFromCommand adding baristaItem from {}", commandItem.toString());
                 LineItem lineItem = new LineItem(commandItem.item, commandItem.name, commandItem.price, ItemStatus.IN_PROGRESS, order);
                 order.addBaristaLineItem(lineItem);
-                LOGGER.debug("added LineItem: {}", order.getBaristaLineItems().get().size());
-                orderEventResult.addBaristaTicket(new OrderIn(order.getOrderId(), lineItem.getItemId(), lineItem.getItem(), lineItem.getName()));
-                LOGGER.debug("Added Barista Ticket to OrderEventResult: {}", orderEventResult.getBaristaTickets().get().size());
+                orderEventResult.addBaristaTicket(new OrderIn(order.getOrderId(), lineItem.getItemId(), lineItem.getItem(), lineItem.getName(), order.getTimestamp()));
                 orderEventResult.addUpdate(new OrderUpdate(order.getOrderId(), lineItem.getItemId(), lineItem.getName(), lineItem.getItem(), OrderStatus.IN_PROGRESS));
-                LOGGER.debug("Added Order Update to OrderEventResult: ", orderEventResult.getOrderUpdates().size());
             });
         }
         LOGGER.debug("adding Kitchen LineItems");
@@ -102,7 +98,7 @@ public class Order extends PanacheEntityBase {
                 LOGGER.debug("createOrderFromCommand adding kitchenItem from {}", commandItem.toString());
                 LineItem lineItem = new LineItem(commandItem.item, commandItem.name, commandItem.price, ItemStatus.IN_PROGRESS, order);
                 order.addKitchenLineItem(lineItem);
-                orderEventResult.addKitchenTicket(new OrderIn(order.getOrderId(), lineItem.getItemId(), lineItem.getItem(), lineItem.getName()));
+                orderEventResult.addKitchenTicket(new OrderIn(order.getOrderId(), lineItem.getItemId(), lineItem.getItem(), lineItem.getName(), order.getTimestamp()));
                 orderEventResult.addUpdate(new OrderUpdate(order.getOrderId(), lineItem.getItemId(), lineItem.getName(), lineItem.getItem(), OrderStatus.IN_PROGRESS));
             });
         }
@@ -120,27 +116,27 @@ public class Order extends PanacheEntityBase {
         OrderEventResult orderEventResult = new OrderEventResult();
 
         orderEventResult.addUpdate(new OrderUpdate(
-                orderUp.orderId,
-                orderUp.itemId,
-                orderUp.name,
-                orderUp.item,
+                orderUp.orderId(),
+                orderUp.itemId(),
+                orderUp.name(),
+                orderUp.item(),
                 OrderStatus.FULFILLED,
-                orderUp.madeBy));
+                orderUp.madeBy()));
 
         // loop through barista tickets and update this line item
         if (this.getBaristaLineItems().isPresent()) {
             this.getBaristaLineItems().get().stream().forEach(baristaLineItem -> {
-                if (baristaLineItem.getItemId().equals(orderUp.itemId)) {
+                if (baristaLineItem.getItemId().equals(orderUp.itemId())) {
                     baristaLineItem.setItemStatus(ItemStatus.FULFILLED);
-                    orderEventResult.addUpdate(new OrderUpdate(orderUp.orderId, orderUp.itemId, orderUp.name, orderUp.item, OrderStatus.FULFILLED, orderUp.madeBy));
+                    orderEventResult.addUpdate(new OrderUpdate(orderUp.orderId(), orderUp.itemId(), orderUp.name(), orderUp.item(), OrderStatus.FULFILLED, orderUp.madeBy()));
                 }
             });
         }
         if (this.getKitchenLineItems().isPresent()) {
             this.getKitchenLineItems().get().stream().forEach(kitchenLineItem -> {
-                if (kitchenLineItem.getItemId().equals(orderUp.itemId)) {
+                if (kitchenLineItem.getItemId().equals(orderUp.itemId())) {
                     kitchenLineItem.setItemStatus(ItemStatus.FULFILLED);
-                    orderEventResult.addUpdate(new OrderUpdate(orderUp.orderId, orderUp.itemId, orderUp.name, orderUp.item, OrderStatus.FULFILLED, orderUp.madeBy));
+                    orderEventResult.addUpdate(new OrderUpdate(orderUp.orderId(), orderUp.itemId(), orderUp.name(), orderUp.item(), OrderStatus.FULFILLED, orderUp.madeBy()));
                 }
             });
         }

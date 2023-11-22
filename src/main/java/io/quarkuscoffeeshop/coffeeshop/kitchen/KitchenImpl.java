@@ -38,20 +38,20 @@ public class KitchenImpl implements Kitchen {
     @Transactional
     public void onOrderIn(final Message message) {
         OrderIn orderIn = JsonUtil.fromJson(message.body().toString(), OrderIn.class);
-        KitchenOrder kitchenOrder = new KitchenOrder(orderIn.orderId, orderIn.item, Instant.now());
+        KitchenOrder kitchenOrder = new KitchenOrder(orderIn.orderId(), orderIn.item(), Instant.now());
         LOGGER.debug("order in : {}", orderIn);
         try {
-            Thread.sleep(calculateDelay(orderIn.item));
+            Thread.sleep(calculateDelay(orderIn.item()));
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
         OrderUp orderUp = new OrderUp(
-                orderIn.orderId,
-                orderIn.itemId,
-                orderIn.item,
-                orderIn.name,
-                Instant.now(),
-                madeBy);
+                orderIn.orderId(),
+                orderIn.itemId(),
+                orderIn.item(),
+                orderIn.name(),
+                madeBy,
+                Instant.now());
         kitchenOrder.setTimeUp(Instant.now());
         kitchenOrderRepository.persist(kitchenOrder);
         eventBus.<OrderUp>publish(ORDERS_UP, JsonUtil.toJson(orderUp));
