@@ -52,11 +52,11 @@ public class OrderServiceOrderUpTest {
         OrderIn orderIn = orderEventResult.getBaristaTickets().get().get(0);
         OrderUp orderUp = new OrderUp(
                 orderId,
-                orderIn.itemId,
-                orderIn.item,
-                orderIn.name,
-                Instant.now(),
-                "Igor");
+                orderIn.itemId(),
+                orderIn.item(),
+                orderIn.name(),
+                "Igor",
+                Instant.now());
 
         // send the OrderUp value object to the appropriate channel where it should trigger the OrderService.onOrderUp method
         eventBus.publish(ORDERS_UP, JsonUtil.toJson(orderUp));

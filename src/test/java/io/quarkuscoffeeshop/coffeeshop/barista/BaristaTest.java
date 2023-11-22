@@ -15,6 +15,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import javax.persistence.criteria.CriteriaBuilder;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -31,7 +33,7 @@ public class BaristaTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(BaristaTest.class);
 
     @Inject
-    Barista barista;
+    BaristaImpl barista;
 
     @Inject
     EventBus eventBus;
@@ -54,7 +56,7 @@ public class BaristaTest {
 
     @Test
     public void testMakeBlackCoffee() {
-        OrderIn orderIn = new OrderIn(UUID.randomUUID().toString(), UUID.randomUUID().toString(), Item.COFFEE_BLACK, "Spock");
+        OrderIn orderIn = new OrderIn(UUID.randomUUID().toString(), UUID.randomUUID().toString(), Item.COFFEE_BLACK, "Spock", Instant.now());
 
         eventBus.publish(BARISTA_IN, JsonUtil.toJson(orderIn));
         try {

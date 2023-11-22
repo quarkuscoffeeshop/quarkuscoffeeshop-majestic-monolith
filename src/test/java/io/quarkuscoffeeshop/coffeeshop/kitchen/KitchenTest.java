@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -49,7 +50,7 @@ public class KitchenTest {
 
     @Test
     public void testSingleCroissant() {
-        OrderIn orderIn = new OrderIn(UUID.randomUUID().toString(), UUID.randomUUID().toString(), Item.CROISSANT, "Spock");
+        OrderIn orderIn = new OrderIn(UUID.randomUUID().toString(), UUID.randomUUID().toString(), Item.CROISSANT, "Spock", Instant.now());
 
         eventBus.publish(KITCHEN_IN, JsonUtil.toJson(orderIn));
 
